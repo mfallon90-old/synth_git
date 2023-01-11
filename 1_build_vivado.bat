@@ -4,4 +4,4 @@ call C:\Xilinx\Vivado\2020.2\settings64 - quiet
 
 cd vivado\ 
 
-vivado -mode batch -source ../scripts/build.tcl
+vivado -mode batch -source ../scripts/build_vivado.tcl
