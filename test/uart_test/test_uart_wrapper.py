@@ -16,7 +16,7 @@ async def reset_dut(reset_n, duration_ns):
  
 @cocotb.test()
 async def read_write(dut):
-    """Simple test for axi slave"""
+    """Test for uart mIDI interface"""
 
     cocotb.start_soon(Clock(dut.s_axi_aclk, 44.286, units="ns").start())
 
@@ -30,31 +30,23 @@ async def read_write(dut):
     # # Reset system
     await reset_dut(dut.s_axi_aresetn, 20)
 
-    # # send uart data
-    # num = 170
-    # await uart_source.write(num.to_bytes(1, 'little'))
-    # await RisingEdge(dut.midi_intr)
-    # read_data = await axi_master.read(0, 4)
 
-    num = 170
-    write_op = await axi_master.write(0, (num).to_bytes(4, byteorder = 'little'))
-    read_data = await axi_master.read(0, 4)
-    await ClockCycles(dut.s_axi_aclk, 300)
+    # loop through 10 times
+    for index in range(10):
 
-    # num = 171
-    # write_op = await axi_master.write(4, (num).to_bytes(4, byteorder = 'little'))
-    # read_data = await axi_master.read(4, 4)
-    # await ClockCycles(dut.s_axi_aclk, 300)
-
-    # num = 172
-    # write_op = await axi_master.write(8, (num).to_bytes(4, byteorder = 'little'))
-    # read_data = await axi_master.read(8, 4)
-    # await ClockCycles(dut.s_axi_aclk, 300)
-
-    # num = 173
-    # write_op = await axi_master.write(12, (num).to_bytes(4, byteorder = 'little'))
-    # read_data = await axi_master.read(12, 4)
-    # await ClockCycles(dut.s_axi_aclk, 300)
+        # Randomize data
+        num = random.randrange(0,255)
+        uart_tx = num.to_bytes(1, 'little')
+        
+        # Send UART data
+        await uart_source.write(uart_tx)
+        
+        # Wait for interrupt
+        await RisingEdge(dut.midi_intr)
+        
+        # Read from register and check valeu
+        read_data = await axi_master.read(0, 4)
+        assert read_data.data[0] == num
 
 
     dut._log.info('Test done')
