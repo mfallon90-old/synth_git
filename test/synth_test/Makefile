@@ -34,7 +34,7 @@ PWD=$(shell pwd)
 
 VERILOG_SOURCES += $(PWD)/../../hdl/fm_synth_wrapper.v
 VERILOG_SOURCES += $(PWD)/../../hdl/fm_synth_top.v
-VERILOG_SOURCES += $(PWD)/../../hdl/axi_ip/axi_lite_cs_reg.v
+VERILOG_SOURCES += $(PWD)/../../hdl/axi_lite_cs_reg.v
 VERILOG_SOURCES += $(PWD)/../../hdl/control_unit.v
 VERILOG_SOURCES += $(PWD)/../../hdl/note_gen.v
 VERILOG_SOURCES += $(PWD)/../../hdl/phase_modulate.v
@@ -48,7 +48,6 @@ VERILOG_SOURCES += $(PWD)/../../hdl/shift_reg.v
 VERILOG_SOURCES += $(PWD)/../../hdl/amp_shaper.v
 VERILOG_SOURCES += $(PWD)/../../hdl/rc_filter_fsm.v
 VERILOG_SOURCES += $(PWD)/../../hdl/sum_notes_16.v
-VERILOG_SOURCES += $(PWD)/../../hdl/sum_notes_8.v
 VERILOG_SOURCES += $(PWD)/../../hdl/fixed_point_adder.v
 
 TOPLEVEL := fm_synth_wrapper

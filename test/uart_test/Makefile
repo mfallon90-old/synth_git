@@ -33,6 +33,7 @@ TOPLEVEL_LANG ?= verilog
 PWD=$(shell pwd)
 
 VERILOG_SOURCES += $(PWD)/../../hdl/uart_rx.v
+VERILOG_SOURCES += $(PWD)/../../hdl/uart_fifo.v
 VERILOG_SOURCES += $(PWD)/../../hdl/axi_uart_wrapper.v
 
 TOPLEVEL := axi_uart_wrapper

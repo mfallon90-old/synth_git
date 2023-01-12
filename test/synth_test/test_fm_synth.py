@@ -5,7 +5,6 @@ from cocotbext.axi import AxiLiteBus, AxiLiteMaster
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge, ClockCycles
 
-
 CHAN_1_C_ADDR   = 0
 CHAN_2_C_ADDR   = 4
 CHAN_3_C_ADDR   = 8

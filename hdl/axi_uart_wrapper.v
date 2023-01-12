@@ -4,7 +4,8 @@
 module axi_uart_wrapper #(
     parameter integer C_DATA_WIDTH      = 32,
     parameter integer C_ADDR_WIDTH      = 4,
-    parameter integer C_LSB_FIRST       = 1
+    parameter integer C_LSB_FIRST       = 1,
+    parameter integer C_FIFO_DEPTH      = 8
 
     )(
     // Clock and reset
@@ -47,6 +48,7 @@ module axi_uart_wrapper #(
     reg [C_DATA_WIDTH-1:0]  register;
 
     wire[7:0]               midi_out;
+    wire[7:0]               fifo_out;
     reg [C_ADDR_WIDTH-1:0]  read_address;
     reg [C_DATA_WIDTH-1:0]  read_data;
     reg [1:0]               read_resp;
@@ -83,7 +85,7 @@ module axi_uart_wrapper #(
 
             // Output read data
             if (rd_en) begin
-                read_data   <= {{24{1'b0}}, midi_out};
+                read_data   <= {{24{1'b0}}, fifo_out};
                 read_resp   <= C_OKAY;
                 rd_data_vld <= 1'b1;
                 rd_en       <= 1'b0;
@@ -106,6 +108,18 @@ module axi_uart_wrapper #(
             .i_data     (midi_in),
             .o_data     (midi_out),
             .rdy_flg    (midi_intr)
+        );
+
+    uart_fifo #(
+            .NUM_BITS   (8),
+            .FIFO_DEPTH (C_FIFO_DEPTH))
+        midi_fifo (
+            .clk            (s_axi_aclk),
+            .rst_n          (s_axi_aresetn),
+            .word_in        (midi_out),
+            .word_in_valid  (midi_intr),
+            .word_out_valid (rd_en),
+            .word_out       (fifo_out)
         );
 
 
