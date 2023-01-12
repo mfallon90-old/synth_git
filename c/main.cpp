@@ -129,9 +129,12 @@ unsigned char test[500];
 unsigned char patch_byte;
 unsigned char mode;
 unsigned char status;
-unsigned char note;
+unsigned char on_note;
+unsigned char off_note;
+unsigned char control_change;
 unsigned char velocity;
 unsigned char volume;
+unsigned char mod_byte;
 unsigned int i = 0;
 unsigned char patch = 0;
 
@@ -147,46 +150,42 @@ void UART_IRQ_Handler(void *CallbackRef) {
     switch (state) {
         case S_STATUS:
             status = byte_in;
-            switch (byte_in) {
-                case NOTE_ON:
-                    state = S_PLAY;
-                    break;
-
-                case NOTE_OFF:
-                    state = S_PLAY;
-                    break;
-
-                case MODE:
-                    state = S_MODE;
-                    break;
+            switch (status) {
+                case NOTE_ON        : state = S_NOTE_ON;          break;
+                case NOTE_OFF       : state = S_NOTE_OFF;         break;
+                case CONTROL_CHANGE : state = S_CONTROL_CHANGE;   break;
+                default             : state = S_STATUS;           break;
             }
             break;
 
 
-        case S_PLAY:
-            note = byte_in;
-            notes = decode_note(note, patch);
+        case S_NOTE_ON:
+            on_note = byte_in;
+            notes = decode_note(on_note, patch);
             if (notes.index != 255) {
-                channels.toggle_note(notes);
+                channels.note_on(notes);
             }
             state = S_VELOCITY;
             break;
 
 
-        case S_MODE:
-            mode = byte_in;
-            switch (mode) {
-                case PATCH:
-                    state = S_PATCH;
-                    break;
+        case S_NOTE_OFF:
+            off_note = byte_in;
+            notes = decode_note(off_note, patch);
+            if (notes.index != 255) {
+                channels.note_off(notes);
+            }
+            state = S_VELOCITY;
+            break;
 
-                case VOLUME:
-                    state = S_VOLUME;
-                    break;
 
-                default:
-                    state = S_STATUS;
-                    break;
+        case S_CONTROL_CHANGE:
+            control_change = byte_in;
+            switch (control_change) {
+                case PATCH    : state = S_PATCH;    break;
+                case VOLUME   : state = S_VOLUME;   break;
+                case MODULATE : state = S_MODULATE; break;
+                default       : state = S_STATUS;   break;
             }
             break;
 
@@ -194,13 +193,24 @@ void UART_IRQ_Handler(void *CallbackRef) {
         case S_PATCH:
             patch_byte = byte_in;
             decode_patch(patch_byte, &patch);
-            channels.toggle_modulator(notes, patch);
+            if (patch < 6) {
+                channels.toggle_modulator(notes, patch);
+            }
             state = S_STATUS;
             break;
+
 
         case S_VOLUME:
             volume = byte_in;
             decode_volume(volume);
+            state = S_STATUS;
+
+
+        case S_MODULATE:
+            mod_byte = byte_in;
+            if (patch == 6) {
+                channels.modulate(mod_byte);
+            }
             state = S_STATUS;
 
 

@@ -2,7 +2,6 @@
 #ifndef MYLIB_CONSTANTS_H
 #define MYLIB_CONSTANTS_H
 
-
     struct node {
         unsigned int chan_num = 0;
         unsigned int note = 0;
@@ -31,24 +30,32 @@
     extern info note_info;
     extern car_mod notes;
 
-	//Register Base Address
-	#define BASE_ADDR XPAR_FM_SYNTH_WRAPPER_0_BASEADDR
+    //Register Base Address
+    #define BASE_ADDR XPAR_FM_SYNTH_WRAPPER_0_BASEADDR
 
-	//UART Base Address
-	#define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
+    //UART Base Address
+    #define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
 
-    #define NOTE_ON     0x90
-    #define NOTE_OFF    0x80
-    #define MODE        0xb0
-    #define PATCH       0x07
-    #define VOLUME      0x5B
+    #define NOTE_OFF                0x80
+    #define NOTE_ON                 0x90
+    #define POLYPHONIC_AFTERTOUCH   0xA0
+    #define CONTROL_CHANGE          0xB0
+    #define PROGRAM_CHANGE          0xC0
+    #define CHANNEL_AFTERTOUCH      0xD0
+    #define PITCH_BEND              0xE0
 
-    #define S_STATUS    0
-    #define S_PLAY      1
-    #define S_VELOCITY  2
-    #define S_MODE      3
-    #define S_PATCH     4
-    #define S_VOLUME    5
+    #define PATCH                   0x07
+    #define MODULATE                0x0A
+    #define VOLUME                  0x5B
+
+    #define S_STATUS            0
+    #define S_NOTE_ON           1
+    #define S_NOTE_OFF          2
+    #define S_CONTROL_CHANGE    3
+    #define S_VELOCITY          4
+    #define S_PATCH             5
+    #define S_VOLUME            6
+    #define S_MODULATE          7
 
     #define NUM_CHANNELS 16
     #define MASK_ON  0X80000000

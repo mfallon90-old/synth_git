@@ -25,6 +25,7 @@ void linked_list::append_node(unsigned int channel) {
     return;
 }
 
+
 // Set available to high when interrupt is seen
 void linked_list::make_available() {
     node *tmp = head;
@@ -49,6 +50,7 @@ void linked_list::make_available() {
     return;
 }
 
+
 // Traverse the linked list and keep track of whether
 // the note is being played, and how many paths are
 // waiting to be reset
@@ -69,7 +71,8 @@ info linked_list::in_use(unsigned int note) {
     return note_info;
 }
 
-void linked_list::toggle_note(car_mod note) {
+
+void linked_list::note_on(car_mod note) {
         info note_info = in_use(note.carrier);
         node *tmp = head;
 
@@ -101,9 +104,17 @@ void linked_list::toggle_note(car_mod note) {
         Xil_Out32(BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
         tmp->enable = true;
     }
+    return;
+}
+
+
+void linked_list::note_off(car_mod note) {
+        info note_info = in_use(note.carrier);
+        node *tmp = head;
+
     // If the note is currently being played then set the enable bit to 0 and 
     // set the reset counter to the last in line
-    else {
+    if (note_info.in_use == true) {
         tmp = note_info.index;
         tmp->awaiting_reset = note_info.rst_cnt+1;
         Xil_Out32((BASE_ADDR + (4*tmp->chan_num)), (note.carrier & MASK_OFF));
@@ -128,6 +139,18 @@ void linked_list::toggle_modulator(car_mod note, unsigned char patch) {
         if (!tmp->available) {
             tmp->mod = mod_word;
             Xil_Out32(BASE_ADDR + 4*(tmp->chan_num + NUM_CHANNELS), mod_word);
+        }
+        tmp = tmp->next;
+    }
+    return;
+}
+
+void linked_list::modulate(unsigned char x) {
+    node *tmp = head;
+    while (tmp != NULL) {
+        if (tmp->enable == true) {
+            tmp->mod = TUNING_WORD[x];
+            Xil_Out32(BASE_ADDR + 4*(tmp->chan_num + NUM_CHANNELS), tmp->mod);
         }
         tmp = tmp->next;
     }

@@ -21,8 +21,10 @@ class linked_list {
         void append_node(unsigned int);
         void make_available();
         info in_use(unsigned int);
-        void toggle_note(car_mod);
+        void note_on(car_mod);
+        void note_off(car_mod);
         void toggle_modulator(car_mod, unsigned char);
+        void modulate(unsigned char);
 };
 
 #endif
