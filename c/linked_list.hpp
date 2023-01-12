@@ -25,6 +25,7 @@ class linked_list {
         void note_off(car_mod);
         void toggle_modulator(car_mod, unsigned char);
         void modulate(unsigned char);
+        void bend_pitch(unsigned int);
 };
 
 #endif

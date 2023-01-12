@@ -134,8 +134,12 @@ unsigned char off_note;
 unsigned char control_change;
 unsigned char velocity;
 unsigned char volume;
-unsigned char mod_byte;
-unsigned int i = 0;
+unsigned char mod_byte = 0;
+unsigned char mod_amp_byte;
+unsigned int  pitch_bend_lsb;
+unsigned int  pitch_bend_msb;
+unsigned int  pitch_bend;
+unsigned int  i = 0;
 unsigned char patch = 0;
 
 // IRQ Handling function
@@ -154,6 +158,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
                 case NOTE_ON        : state = S_NOTE_ON;          break;
                 case NOTE_OFF       : state = S_NOTE_OFF;         break;
                 case CONTROL_CHANGE : state = S_CONTROL_CHANGE;   break;
+                case PITCH_BEND     : state = S_PITCH_BEND_LSB;   break;
                 default             : state = S_STATUS;           break;
             }
             break;
@@ -161,7 +166,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
         case S_NOTE_ON:
             on_note = byte_in;
-            notes = decode_note(on_note, patch);
+            notes = decode_note(on_note, patch, mod_byte);
             if (notes.index != 255) {
                 channels.note_on(notes);
             }
@@ -171,7 +176,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
         case S_NOTE_OFF:
             off_note = byte_in;
-            notes = decode_note(off_note, patch);
+            notes = decode_note(off_note, patch, mod_byte);
             if (notes.index != 255) {
                 channels.note_off(notes);
             }
@@ -183,8 +188,9 @@ void UART_IRQ_Handler(void *CallbackRef) {
             control_change = byte_in;
             switch (control_change) {
                 case PATCH    : state = S_PATCH;    break;
-                case VOLUME   : state = S_VOLUME;   break;
                 case MODULATE : state = S_MODULATE; break;
+                case MOD_AMP  : state = S_MOD_AMP;  break;
+                case VOLUME   : state = S_VOLUME;   break;
                 default       : state = S_STATUS;   break;
             }
             break;
@@ -204,6 +210,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
             volume = byte_in;
             decode_volume(volume);
             state = S_STATUS;
+            break;
 
 
         case S_MODULATE:
@@ -212,13 +219,35 @@ void UART_IRQ_Handler(void *CallbackRef) {
                 channels.modulate(mod_byte);
             }
             state = S_STATUS;
+            break;
+
+
+        case S_MOD_AMP:
+            mod_amp_byte = byte_in;
+            decode_mod_amp(mod_amp_byte);
+            state = S_STATUS;
+            break;
 
 
         case S_VELOCITY:
             velocity = byte_in;
             state = S_STATUS;
             break;
+
+
+        case S_PITCH_BEND_LSB:
+            pitch_bend_lsb = (unsigned int) byte_in;
+            state = S_PITCH_BEND_MSB;
+            break;
+
+        case S_PITCH_BEND_MSB:
+            pitch_bend_msb = (unsigned int) byte_in;
+            pitch_bend = (pitch_bend_msb << 7) | pitch_bend_lsb;
+            channels.bend_pitch(pitch_bend);
+            state = S_STATUS;
+            break;
     }
 }
+
 
 

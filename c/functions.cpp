@@ -6,9 +6,20 @@
     void decode_volume(unsigned char x) {
         unsigned int vol, mask, reset;
 
-        mask = x << 22;
+        mask = x << 15;
         vol = Xil_In32(BASE_ADDR + TAU_ADDR);
         reset = VOLUME_RST & vol;
+
+        Xil_Out32(BASE_ADDR + TAU_ADDR, mask | reset);
+        return;
+    }
+
+    void decode_mod_amp(unsigned char x) {
+        unsigned int mod_amp, mask, reset;
+
+        mask = x << 23;
+        mod_amp = Xil_In32(BASE_ADDR + TAU_ADDR);
+        reset = MOD_AMP_RST & mod_amp;
 
         Xil_Out32(BASE_ADDR + TAU_ADDR, mask | reset);
         return;
@@ -47,7 +58,7 @@
         return;
     }
 
-   car_mod decode_note(unsigned char x, unsigned char patch) {
+   car_mod decode_note(unsigned char x, unsigned char patch, unsigned char mod_byte) {
         car_mod notes;
         switch(x) {
             case 12  : notes.index = 0;   break;
@@ -210,6 +221,9 @@
 
         if (patch == 0) {
             notes.modulator = 0;
+        }
+        else if (patch == 6) {
+            notes.modulator = TUNING_WORD[mod_byte];
         }
 
         return notes;

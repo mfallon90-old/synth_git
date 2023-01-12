@@ -156,3 +156,36 @@ void linked_list::modulate(unsigned char x) {
     }
     return;
 }
+
+void linked_list::bend_pitch(unsigned int x) {
+    node *tmp = head;
+    unsigned int bend = x & 0x00001FFF;
+    unsigned int bend_up;
+    unsigned int bend_down;
+    unsigned int sign = x >> 13;
+    unsigned int diff_up;
+    unsigned int diff_down;
+    unsigned int interval_up;
+    unsigned int interval_down;
+    unsigned int new_note;
+    while (tmp != NULL) {
+        if (tmp->enable == true) {
+            diff_up   = (TUNING_WORD[tmp->index+1] - tmp->note);
+            diff_down = (tmp->note - TUNING_WORD[tmp->index-1]);
+            interval_up   = diff_up   >> 13;
+            interval_down = diff_down >> 13;
+            bend_up = bend*interval_up;
+            bend_down = (8192-bend)*interval_down;
+            if (sign) {
+                new_note = tmp->note + bend_up;
+                Xil_Out32(BASE_ADDR + 4*(tmp->chan_num), new_note | MASK_ON);
+            }
+            else {
+                new_note = tmp->note - bend_down;
+                Xil_Out32(BASE_ADDR + 4*(tmp->chan_num), new_note | MASK_ON);
+            }
+        }
+        tmp = tmp->next;
+    }
+    return;
+}
