@@ -5,7 +5,7 @@ module axi_uart_wrapper #(
     parameter integer C_DATA_WIDTH      = 32,
     parameter integer C_ADDR_WIDTH      = 4,
     parameter integer C_LSB_FIRST       = 1,
-    parameter integer C_FIFO_DEPTH      = 8
+    parameter integer C_FIFO_DEPTH      = 64
 
     )(
     // Clock and reset

@@ -29,7 +29,7 @@ module fm_synth_top #(
     input   wire    [4:0]               attack_tau,
     input   wire    [4:0]               decay_tau,
     input   wire    [4:0]               release_tau,
-    input   wire    [1:0]               mod_amplitude,
+    input   wire    [7:0]               mod_amplitude,
     input   wire    [7:0]               volume_reg,
     output  wire                        word_select,
     output  wire                        serial_data,
@@ -153,8 +153,8 @@ module fm_synth_top #(
     fixed_point_mult #(
             .WI_1   (6),
             .WF_1   (18),
-            .WI_2   (5),
-            .WF_2   (3),
+            .WI_2   (4),
+            .WF_2   (4),
             .WI_O   (6),
             .WF_O   (18))
         volume (

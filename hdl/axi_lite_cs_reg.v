@@ -1,14 +1,12 @@
 
 `timescale 1 ns / 1 ps
 `define NUM_REG (C_NUM_RW_REG + C_NUM_RO_REG)
-`define PCKD_BITS (C_DATA_WIDTH * C_NUM_CHAN)
+`define PCKD_BITS (C_DATA_WIDTH * 16)
 
 module axi_lite_cs_reg #(
     parameter integer C_DATA_WIDTH      = 32,
-    parameter integer C_NUM_RW_REG      = 33,
-    parameter integer C_NUM_RO_REG      = 0,
-    parameter integer C_NUM_CHAN        = 16,
-    parameter integer C_ADDR_WIDTH      = ($clog2(`NUM_REG) + 2)
+    parameter integer C_NUM_REG         = 33,
+    parameter integer C_ADDR_WIDTH      = ($clog2(C_NUM_REG) + 2)
     )(
     // Clock and reset
     input   wire                            s_axi_aclk,
@@ -43,16 +41,53 @@ module axi_lite_cs_reg #(
     output  wire    [4:0]                   attack_tau,
     output  wire    [4:0]                   decay_tau,
     output  wire    [4:0]                   release_tau,
-    output  wire    [1:0]                   mod_amplitude,
+    output  wire    [7:0]                   mod_amplitude,
     output  wire    [7:0]                   volume_reg
     );
+
+    // 31   mod_amp     vol    a_tau   d_tau   r_tau
+    // 31   30:23      22:15    14:10   9:5    4:0
+    // 0  0000.0000  0000.0000  00000  00000  00000
 
     localparam  [1:0]   C_OKAY      = 2'b00;
     localparam  [1:0]   C_EX_OKAY   = 2'b01;
     localparam  [1:0]   C_SLV_ERR   = 2'b10;
     localparam  [1:0]   C_DEC_ERR   = 2'b11;
 
-    reg [C_DATA_WIDTH-1:0]  reg_file [0:`NUM_REG-1];
+    reg [C_DATA_WIDTH-1:0]  register_0;
+    reg [C_DATA_WIDTH-1:0]  register_1;
+    reg [C_DATA_WIDTH-1:0]  register_2;
+    reg [C_DATA_WIDTH-1:0]  register_3;
+    reg [C_DATA_WIDTH-1:0]  register_4;
+    reg [C_DATA_WIDTH-1:0]  register_5;
+    reg [C_DATA_WIDTH-1:0]  register_6;
+    reg [C_DATA_WIDTH-1:0]  register_7;
+    reg [C_DATA_WIDTH-1:0]  register_8;
+    reg [C_DATA_WIDTH-1:0]  register_9;
+    reg [C_DATA_WIDTH-1:0]  register_10;
+    reg [C_DATA_WIDTH-1:0]  register_11;
+    reg [C_DATA_WIDTH-1:0]  register_12;
+    reg [C_DATA_WIDTH-1:0]  register_13;
+    reg [C_DATA_WIDTH-1:0]  register_14;
+    reg [C_DATA_WIDTH-1:0]  register_15;
+    reg [C_DATA_WIDTH-1:0]  register_16;
+    reg [C_DATA_WIDTH-1:0]  register_17;
+    reg [C_DATA_WIDTH-1:0]  register_18;
+    reg [C_DATA_WIDTH-1:0]  register_19;
+    reg [C_DATA_WIDTH-1:0]  register_20;
+    reg [C_DATA_WIDTH-1:0]  register_21;
+    reg [C_DATA_WIDTH-1:0]  register_22;
+    reg [C_DATA_WIDTH-1:0]  register_23;
+    reg [C_DATA_WIDTH-1:0]  register_24;
+    reg [C_DATA_WIDTH-1:0]  register_25;
+    reg [C_DATA_WIDTH-1:0]  register_26;
+    reg [C_DATA_WIDTH-1:0]  register_27;
+    reg [C_DATA_WIDTH-1:0]  register_28;
+    reg [C_DATA_WIDTH-1:0]  register_29;
+    reg [C_DATA_WIDTH-1:0]  register_30;
+    reg [C_DATA_WIDTH-1:0]  register_31;
+    reg [C_DATA_WIDTH-1:0]  register_32;
+
     reg [C_ADDR_WIDTH-1:0]  i;
     reg [C_ADDR_WIDTH-1:0]  read_address;
     reg [C_ADDR_WIDTH-1:0]  write_address;
@@ -70,18 +105,21 @@ module axi_lite_cs_reg #(
     reg                     wr_data_good;
     genvar                  j;
 
-    generate
-        for (j=0; j<(C_NUM_CHAN); j=j+1) begin
-            assign carrier_out[C_DATA_WIDTH*(j+1)-1:C_DATA_WIDTH*j]     = reg_file[j];
-            assign modulator_out[C_DATA_WIDTH*(j+1)-1:C_DATA_WIDTH*j]   = reg_file[j+C_NUM_CHAN];
-        end
-    endgenerate
+    assign carrier_out =   {register_0,  register_1,  register_2,  register_3,
+                            register_4,  register_5,  register_6,  register_7,
+                            register_8,  register_9,  register_10, register_11,
+                            register_12, register_13, register_14, register_15};
 
-    assign attack_tau       = reg_file[`NUM_REG-1][14:10];
-    assign decay_tau        = reg_file[`NUM_REG-1][9:5];
-    assign release_tau      = reg_file[`NUM_REG-1][4:0];
-    assign mod_amplitude    = reg_file[`NUM_REG-1][31:30];
-    assign volume_reg       = reg_file[`NUM_REG-1][29:22];
+    assign modulator_out = {register_16, register_17, register_18, register_19,
+                            register_20, register_21, register_22, register_23,
+                            register_24, register_25, register_26, register_27,
+                            register_28, register_29, register_30, register_31};
+
+    assign mod_amplitude    = register_32[30:23];
+    assign volume_reg       = register_32[22:15];
+    assign attack_tau       = register_32[14:10];
+    assign decay_tau        = register_32[9:5];
+    assign release_tau      = register_32[4:0];
 
     assign s_axi_awready    = wr_addr_rdy;
     assign s_axi_wready     = wr_data_rdy;
@@ -116,14 +154,50 @@ module axi_lite_cs_reg #(
 
             // Output read data
             if (rd_en) begin
-                for (i=0; i<`NUM_REG; i=i+1) begin
-                    if (read_address[C_ADDR_WIDTH-1:2] == i) begin
-                        read_data   <= reg_file[i];
-                        read_resp   <= C_OKAY;
-                        rd_data_vld <= 1'b1;
-                        rd_en       <= 1'b0;
+                read_resp   <= C_OKAY;
+                rd_data_vld <= 1'b1;
+                rd_en       <= 1'b0;
+                case (read_address[C_ADDR_WIDTH-1:2])
+                    0  : read_data   <= register_0;
+                    1  : read_data   <= register_1;
+                    2  : read_data   <= register_2;
+                    3  : read_data   <= register_3;
+                    4  : read_data   <= register_4;
+                    5  : read_data   <= register_5;
+                    6  : read_data   <= register_6;
+                    7  : read_data   <= register_7;
+                    8  : read_data   <= register_8;
+                    9  : read_data   <= register_9;
+                    10 : read_data   <= register_10;
+                    11 : read_data   <= register_11;
+                    12 : read_data   <= register_12;
+                    13 : read_data   <= register_13;
+                    14 : read_data   <= register_14;
+                    15 : read_data   <= register_15;
+                    16 : read_data   <= register_16;
+                    17 : read_data   <= register_17;
+                    18 : read_data   <= register_18;
+                    19 : read_data   <= register_19;
+                    20 : read_data   <= register_20;
+                    21 : read_data   <= register_21;
+                    22 : read_data   <= register_22;
+                    23 : read_data   <= register_23;
+                    24 : read_data   <= register_24;
+                    25 : read_data   <= register_25;
+                    26 : read_data   <= register_26;
+                    27 : read_data   <= register_27;
+                    28 : read_data   <= register_28;
+                    29 : read_data   <= register_29;
+                    30 : read_data   <= register_30;
+                    31 : read_data   <= register_31;
+                    32 : read_data   <= register_32;
+                
+                    default : begin
+                        read_data <= 0;
+                        read_resp   <= C_DEC_ERR;
+                        rd_data_vld <= 1'b0;
                     end
-                end
+                endcase
             end
             else begin
                 if (s_axi_rready & rd_data_vld) begin
@@ -146,9 +220,40 @@ module axi_lite_cs_reg #(
             wr_data_good    <= 1'b0;
             wr_addr_good    <= 1'b0;
 
-            for (i=0; i<`NUM_REG; i=i+1) begin
-                reg_file[i] <= 0;
-            end
+            register_0     <= 0;
+            register_1     <= 0;
+            register_2     <= 0;
+            register_3     <= 0;
+            register_4     <= 0;
+            register_5     <= 0;
+            register_6     <= 0;
+            register_7     <= 0;
+            register_8     <= 0;
+            register_9     <= 0;
+            register_10    <= 0;
+            register_11    <= 0;
+            register_12    <= 0;
+            register_13    <= 0;
+            register_14    <= 0;
+            register_15    <= 0;
+            register_16    <= 0;
+            register_17    <= 0;
+            register_18    <= 0;
+            register_19    <= 0;
+            register_20    <= 0;
+            register_21    <= 0;
+            register_22    <= 0;
+            register_23    <= 0;
+            register_24    <= 0;
+            register_25    <= 0;
+            register_26    <= 0;
+            register_27    <= 0;
+            register_28    <= 0;
+            register_29    <= 0;
+            register_30    <= 0;
+            register_31    <= 0;
+            register_32    <= 0;
+
         end
 
         else begin
@@ -174,15 +279,51 @@ module axi_lite_cs_reg #(
 
             // Write write data to register
             if (wr_data_good & wr_addr_good) begin
-                for (i=0; i<C_NUM_RW_REG; i=i+1) begin
-                    if (i == write_address[C_ADDR_WIDTH-1:2]) begin
-                        reg_file[i]     <= write_data;
-                        write_resp      <= C_OKAY;
-                        write_valid     <= 1'b1;
-                        wr_data_good    <= 1'b0;
-                        wr_addr_good    <= 1'b0;
+
+                write_resp      <= C_OKAY;
+                write_valid     <= 1'b1;
+                wr_data_good    <= 1'b0;
+                wr_addr_good    <= 1'b0;
+                case (write_address[C_ADDR_WIDTH-1:2])
+                    0  : register_0     <= write_data;
+                    1  : register_1     <= write_data;
+                    2  : register_2     <= write_data;
+                    3  : register_3     <= write_data;
+                    4  : register_4     <= write_data;
+                    5  : register_5     <= write_data;
+                    6  : register_6     <= write_data;
+                    7  : register_7     <= write_data;
+                    8  : register_8     <= write_data;
+                    9  : register_9     <= write_data;
+                    10 : register_10    <= write_data;
+                    11 : register_11    <= write_data;
+                    12 : register_12    <= write_data;
+                    13 : register_13    <= write_data;
+                    14 : register_14    <= write_data;
+                    15 : register_15    <= write_data;
+                    16 : register_16    <= write_data;
+                    17 : register_17    <= write_data;
+                    18 : register_18    <= write_data;
+                    19 : register_19    <= write_data;
+                    20 : register_20    <= write_data;
+                    21 : register_21    <= write_data;
+                    22 : register_22    <= write_data;
+                    23 : register_23    <= write_data;
+                    24 : register_24    <= write_data;
+                    25 : register_25    <= write_data;
+                    26 : register_26    <= write_data;
+                    27 : register_27    <= write_data;
+                    28 : register_28    <= write_data;
+                    29 : register_29    <= write_data;
+                    30 : register_30    <= write_data;
+                    31 : register_31    <= write_data;
+                    32 : register_32    <= write_data;
+                
+                    default : begin
+                        write_resp      <= C_DEC_ERR;
+                        write_valid     <= 1'b0;;
                     end
-                end
+                endcase
             end
             else if (write_valid & s_axi_bready) begin
                 write_valid <= 1'b0;
@@ -194,11 +335,6 @@ module axi_lite_cs_reg #(
     // Dump waves
     initial begin
         $dumpfile("dump.vcd");
-
-        for (i=0; i<`NUM_REG; i=i+1) begin
-            $dumpvars(0,reg_file[i]);
-        end
-
         $dumpvars;
     end
 

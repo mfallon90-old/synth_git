@@ -19,6 +19,11 @@
 //      clk cycles per bit  = 722.581
 //      sample point        = 361.29
 // 
+//      clk frequency       = 32.653061 MHz
+//      baud rate           = 31.250 Kbs
+//      clk cycles per bit  = 1044
+//      sample point        = 522.5
+// 
 //////////////////////////////////////////////////////////////////////////////////
 module uart_rx # (
     parameter LSB_FIRST = 1
@@ -30,7 +35,7 @@ module uart_rx # (
     output  wire            rdy_flg         //register ready to be read
     );
     
-    localparam  SAMPLE_POINT    = 361;              //number of clock cycles until sample point
+    localparam  SAMPLE_POINT    = 522;              //number of clock cycles until sample point
     localparam  BIT_COUNT       = 2*SAMPLE_POINT;   //number of clock cycles in one UART bit
     localparam  NUM_BITS        = 8;                //number of bits in UART word
     

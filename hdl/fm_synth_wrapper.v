@@ -64,16 +64,14 @@ module fm_synth_wrapper #(
     wire    [4:0]                       attack_tau;
     wire    [4:0]                       decay_tau;
     wire    [4:0]                       release_tau;
-    wire    [1:0]                       mod_amplitude;
+    wire    [7:0]                       mod_amplitude;
     wire    [7:0]                       volume_reg;
 
 
     // CONTROL AND STATUS REGISTERS
     axi_lite_cs_reg #(
             .C_DATA_WIDTH   (NUM_BITS),
-            .C_NUM_RW_REG   (NUM_REG),
-            .C_NUM_RO_REG   (0),
-            .C_NUM_CHAN     (NUM_CHANNELS),
+            .C_NUM_REG      (NUM_REG),
             .C_ADDR_WIDTH   (`C_ADDR_WIDTH))
         c_s_reg (
             .s_axi_aclk     (s_axi_aclk),
