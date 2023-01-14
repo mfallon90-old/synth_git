@@ -33,8 +33,8 @@ void linked_list::make_available() {
         if (tmp->awaiting_reset != 0) {
             if (tmp->awaiting_reset == 1) {
                 tmp->awaiting_reset = 0;
-                Xil_Out32(BASE_ADDR + 4*(tmp->chan_num + NUM_CHANNELS), 0);
-                Xil_Out32(BASE_ADDR + 4*tmp->chan_num, 0);
+                Xil_Out32(MOD_BASE_ADDR + 4*(tmp->chan_num), 0);
+                Xil_Out32(CAR_BASE_ADDR + 4*tmp->chan_num, 0);
                 tmp->note = 0;
                 tmp->mod = 0;
                 tmp->index = 255;
@@ -84,8 +84,8 @@ void linked_list::note_on(car_mod note) {
                 tmp->note = note.carrier;
                 tmp->mod = note.modulator;
                 tmp->index = note.index;
-                Xil_Out32(BASE_ADDR + 4*(tmp->chan_num + NUM_CHANNELS), note.modulator);
-                Xil_Out32(BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
+                Xil_Out32(MOD_BASE_ADDR + 4*(tmp->chan_num), note.modulator);
+                Xil_Out32(CAR_BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
                 tmp->available = false;
                 tmp->enable = true;
                 return;
@@ -101,7 +101,7 @@ void linked_list::note_on(car_mod note) {
     else if (note_info.awaiting_rst != 0) {
         tmp = note_info.index;
         tmp->awaiting_reset = 0;
-        Xil_Out32(BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
+        Xil_Out32(CAR_BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
         tmp->enable = true;
     }
     return;
@@ -117,7 +117,7 @@ void linked_list::note_off(car_mod note) {
     if (note_info.in_use == true) {
         tmp = note_info.index;
         tmp->awaiting_reset = note_info.rst_cnt+1;
-        Xil_Out32((BASE_ADDR + (4*tmp->chan_num)), (note.carrier & MASK_OFF));
+        Xil_Out32((CAR_BASE_ADDR + (4*tmp->chan_num)), (note.carrier & MASK_OFF));
         tmp->enable = false;
     }
     return;
@@ -138,7 +138,7 @@ void linked_list::toggle_modulator(car_mod note, unsigned char patch) {
 
         if (!tmp->available) {
             tmp->mod = mod_word;
-            Xil_Out32(BASE_ADDR + 4*(tmp->chan_num + NUM_CHANNELS), mod_word);
+            Xil_Out32(MOD_BASE_ADDR + 4*(tmp->chan_num), mod_word);
         }
         tmp = tmp->next;
     }
@@ -150,7 +150,7 @@ void linked_list::modulate(unsigned char x) {
     while (tmp != NULL) {
         if (tmp->enable == true) {
             tmp->mod = TUNING_WORD[x];
-            Xil_Out32(BASE_ADDR + 4*(tmp->chan_num + NUM_CHANNELS), tmp->mod);
+            Xil_Out32(MOD_BASE_ADDR + 4*(tmp->chan_num), tmp->mod);
         }
         tmp = tmp->next;
     }
@@ -176,14 +176,8 @@ void linked_list::bend_pitch(unsigned int x) {
             interval_down = diff_down >> 13;
             bend_up = bend*interval_up;
             bend_down = (8192-bend)*interval_down;
-            if (sign) {
-                new_note = tmp->note + bend_up;
-                Xil_Out32(BASE_ADDR + 4*(tmp->chan_num), new_note | MASK_ON);
-            }
-            else {
-                new_note = tmp->note - bend_down;
-                Xil_Out32(BASE_ADDR + 4*(tmp->chan_num), new_note | MASK_ON);
-            }
+            new_note = sign ? tmp->note+bend_up : tmp->note-bend_down;
+            Xil_Out32(CAR_BASE_ADDR + 4*(tmp->chan_num), new_note | MASK_ON);
         }
         tmp = tmp->next;
     }

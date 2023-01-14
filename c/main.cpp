@@ -11,19 +11,6 @@
 #include "linked_list.hpp"
 #include "functions.hpp"
 
-
-//Register Base Address
-#define BASE_ADDR XPAR_FM_SYNTH_WRAPPER_0_BASEADDR
-
-//UART Base Address
-#define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
-
-// 0x43C10000
-
-
-//#define UART_ADDR XPAR_TEST_AXI_SLAVE_0_S04_AXI_BASEADDR
-
-
 //FPGA PL BRAM Controller Interrupt ID
 #define FPGA_SYNTH_INTR_ID XPAR_FABRIC_FM_SYNTH_WRAPPER_0_INTERRUPT_INTR
 
@@ -60,7 +47,7 @@ int main(void)
         return XST_FAILURE;
     }
 
-    Xil_Out32(BASE_ADDR + TAU_ADDR, TAU_MID);
+    Xil_Out32(CTRL_REG_ADDR, TAU_MID);
 
     while(1){}
 

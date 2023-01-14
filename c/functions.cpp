@@ -7,10 +7,10 @@
         unsigned int vol, mask, reset;
 
         mask = x << 15;
-        vol = Xil_In32(BASE_ADDR + TAU_ADDR);
+        vol = Xil_In32(CTRL_REG_ADDR);
         reset = VOLUME_RST & vol;
 
-        Xil_Out32(BASE_ADDR + TAU_ADDR, mask | reset);
+        Xil_Out32(CTRL_REG_ADDR, mask | reset);
         return;
     }
 
@@ -18,10 +18,10 @@
         unsigned int mod_amp, mask, reset;
 
         mask = x << 23;
-        mod_amp = Xil_In32(BASE_ADDR + TAU_ADDR);
+        mod_amp = Xil_In32(CTRL_REG_ADDR);
         reset = MOD_AMP_RST & mod_amp;
 
-        Xil_Out32(BASE_ADDR + TAU_ADDR, mask | reset);
+        Xil_Out32(CTRL_REG_ADDR, mask | reset);
         return;
     }
 

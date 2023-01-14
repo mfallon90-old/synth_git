@@ -2,6 +2,15 @@
 #ifndef MYLIB_CONSTANTS_H
 #define MYLIB_CONSTANTS_H
 
+
+    //Register Base Address
+    #define CAR_BASE_ADDR XPAR_FM_SYNTH_WRAPPER_0_BASEADDR
+    #define MOD_BASE_ADDR (CAR_BASE_ADDR + (4*NUM_CHANNELS))
+    #define CTRL_REG_ADDR (MOD_BASE_ADDR + (4*NUM_CHANNELS))
+
+    //UART Base Address
+    #define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
+
     struct node {
         unsigned int chan_num = 0;
         unsigned int note = 0;
@@ -29,12 +38,6 @@
     extern node *head, *tail;
     extern info note_info;
     extern car_mod notes;
-
-    //Register Base Address
-    #define BASE_ADDR XPAR_FM_SYNTH_WRAPPER_0_BASEADDR
-
-    //UART Base Address
-    #define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
 
     #define NOTE_OFF                0x80
     #define NOTE_ON                 0x90
