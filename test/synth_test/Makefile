@@ -34,7 +34,8 @@ PWD=$(shell pwd)
 
 VERILOG_SOURCES += $(PWD)/../../hdl/fm_synth_wrapper.v
 VERILOG_SOURCES += $(PWD)/../../hdl/fm_synth_top.v
-VERILOG_SOURCES += $(PWD)/../../hdl/axi_lite_cs_reg.v
+VERILOG_SOURCES += $(PWD)/../../hdl/const_pckg.sv
+VERILOG_SOURCES += $(PWD)/../../hdl/axi_lite_cs_reg.sv
 VERILOG_SOURCES += $(PWD)/../../hdl/control_unit.v
 VERILOG_SOURCES += $(PWD)/../../hdl/note_gen.v
 VERILOG_SOURCES += $(PWD)/../../hdl/phase_modulate.v
