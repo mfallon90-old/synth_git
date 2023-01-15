@@ -3,6 +3,13 @@
 #include "xil_io.h"
 #include "constants.hpp"
 
+    void synth_init(unsigned int init) {
+    Xil_Out32(CTRL_REG_ADDR, init);
+    for (int i=0; i<NUM_CHANNELS; i=i+1) {
+        Xil_Out32(VEL_BASE_ADDR + 4*i, VELOCITY_INIT);
+    }
+    }
+
     void decode_volume(unsigned char x) {
         unsigned int vol, mask, reset;
 

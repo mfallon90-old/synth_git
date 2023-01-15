@@ -2,9 +2,9 @@
 #define MYLIB_FUNCTIONS_HPP
 
     #include <stdio.h>
-	#include "constants.hpp"
+    #include "constants.hpp"
 
-//    void decode_mod_amp();
+    void synth_init(unsigned int);
     void decode_volume(unsigned char);
     void decode_mod_amp(unsigned char x);
     void decode_patch(unsigned char, unsigned char*);

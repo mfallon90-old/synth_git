@@ -80,7 +80,8 @@ VELOCITY_ADDR= [CHAN_0_V_ADDR,  CHAN_1_V_ADDR,  CHAN_2_V_ADDR,  CHAN_3_V_ADDR,
 
 
 VELOCITY_INIT = (0b0100_0000_0000_0000_0100_0000_0000_0000)
-TAU_INIT      = (0b0_0001_0000_0001_0000_01111_01111_01111)
+CTRL_INIT_SIN = (0b1_0001_0000_0001_0000_01111_01111_01111)
+CTRL_INIT_SAW = (0b0_0001_0000_0001_0000_01111_01111_01111)
 
 ON_MASK     = (0b1000_0000_0000_0000_0000_0000_0000_0000)
 OFF_MASK    = (0b0111_1111_1111_1111_1111_1111_1111_1111)
@@ -246,8 +247,8 @@ async def reset_dut(reset, reset_n, duration_ns):
     reset_n._log.debug("Reset complete")
 
 
-async def synth_init(axi_master):
-    write_op = await axi_master.write(CTRL_REG_ADDR, TAU_INIT.to_bytes(4, byteorder = 'little'))
+async def synth_init(axi_master, init):
+    write_op = await axi_master.write(CTRL_REG_ADDR, init.to_bytes(4, byteorder = 'little'))
     for i in range(NUM_CHANNELS):
         write_op = await axi_master.write(VELOCITY_ADDR[i], VELOCITY_INIT.to_bytes(4, byteorder = 'little'))
 
@@ -282,12 +283,12 @@ async def read_write(dut):
     await reset_dut(dut.sys_rst, dut.s_axi_aresetn, 20)
 
     # Initialize synthesizer
-    await synth_init(axi_master)
+    await synth_init(axi_master, CTRL_INIT_SAW)
 
     await note_on(axi_master, 0, A5, 0, 64)
 
     # wait for a long time
-    await ClockCycles(dut.word_select, 1000)
+    await ClockCycles(dut.word_select, 200)
 
     # await RisingEdge(dut.interrupt)
     # write_op = await axi_master.write(CHAN_1_M_ADDR, NOTE_OFF.to_bytes(4, byteorder = 'little'))

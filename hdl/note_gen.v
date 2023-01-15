@@ -10,19 +10,22 @@ module note_gen #(
     )(
     input   wire                            clk,
     input   wire                            rst,
+    input   wire                            wave_sel,
     input   wire    [NUM_CHANNELS-1:0]      acc_en,
     input   wire    [NUM_CHANNELS-1:0]      acc_clr,
     input   wire    [NUM_CHANNELS-1:0]      curr_note,
     input   wire    [NUM_BITS-1:0]          tuning_word,
-    output  wire    [WIDTH-1:0]             sin_out
+    output  wire    [WIDTH-1:0]             wave_out
     );
 
     wire    [NUM_BITS-1:0]          phi_out;
     wire    [`ADDR_WIDTH+1:0]       addr;
     wire    [`ADDR_WIDTH-1:0]       addr_mapped;
     wire    [WIDTH-1:0]             lut_out;
+    wire    [WIDTH-1:0]             sin_out;
 
     assign addr = phi_out[NUM_BITS-1:NUM_BITS-`ADDR_WIDTH-2];
+    assign wave_out = wave_sel ? sin_out : phi_out[NUM_BITS-1:NUM_BITS-WIDTH];
 
     phase_acc #(
             .NUM_BITS       (NUM_BITS),

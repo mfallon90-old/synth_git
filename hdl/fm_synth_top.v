@@ -24,6 +24,7 @@ module fm_synth_top #(
     )(
     input   wire                        clk,
     input   wire                        rst,
+    input   wire                        wave_sel,
     input   wire    [`TOTAL_BITS-1:0]   carrier_in,
     input   wire    [`TOTAL_BITS-1:0]   modulator_in,
     input   wire    [`TOTAL_BITS-1:0]   velocity_in,
@@ -96,11 +97,12 @@ module fm_synth_top #(
         modulating_signal (
             .clk            (clk),
             .rst            (rst),
+            .wave_sel       (wave_sel),
             .acc_en         (mod_acc_en),
             .acc_clr        (mod_acc_clr),
             .curr_note      (curr_note),
             .tuning_word    (mod_word),
-            .sin_out        (mod_sig)
+            .wave_out       (mod_sig)
         );
 
     // APPLY MODULATING SIGNAL
@@ -124,11 +126,12 @@ module fm_synth_top #(
         carrier_signal (
             .clk            (clk),
             .rst            (rst),
+            .wave_sel       (wave_sel),
             .acc_en         (car_acc_en),
             .acc_clr        (0),
             .curr_note      (curr_note),
             .tuning_word    (modulated_tuning_word),
-            .sin_out        (car_out)
+            .wave_out       (car_out)
         );
 
     // REGISTER OUTPUTS

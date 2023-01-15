@@ -47,11 +47,7 @@ int main(void)
         return XST_FAILURE;
     }
 
-    Xil_Out32(CTRL_REG_ADDR, TAU_MID);
-
-    for (int i=0; i<NUM_CHANNELS; i=i+1) {
-        Xil_Out32(VEL_BASE_ADDR + 4*i, VELOCITY_INIT);
-    }
+    synth_init(CTRL_INIT_SIN);
 
     while(1){}
 
@@ -157,10 +153,6 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
         case S_NOTE_ON:
             on_note = byte_in;
-            // notes = decode_note(on_note, patch, mod_byte);
-            // if (notes.index != 255) {
-            //     channels.note_on(notes);
-            // }
             state = S_VELOCITY_ON;
             break;
 

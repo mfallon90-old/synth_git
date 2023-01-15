@@ -67,6 +67,7 @@ module fm_synth_wrapper #(
     wire    [4:0]                       release_tau;
     wire    [7:0]                       mod_amplitude;
     wire    [7:0]                       volume_reg;
+    wire                                wave_sel;
 
 
     // CONTROL AND STATUS REGISTERS
@@ -103,7 +104,8 @@ module fm_synth_wrapper #(
             .decay_tau      (decay_tau),
             .release_tau    (release_tau),
             .mod_amplitude  (mod_amplitude),
-            .volume_reg     (volume_reg)
+            .volume_reg     (volume_reg),
+            .wave_sel       (wave_sel)
         );
 
     // FM SYNTH TOP
@@ -119,6 +121,7 @@ module fm_synth_wrapper #(
         synth (
             .clk            (s_axi_aclk),
             .rst            (sys_rst),
+            .wave_sel       (wave_sel),
             .carrier_in     (carriers),
             .modulator_in   (modulators),
             .velocity_in    (velocities),
