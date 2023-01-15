@@ -40,12 +40,12 @@ module sum_notes_16 #(
     generate
         for (k=0; k<16; k=k+2) begin
             fixed_point_adder #(
-                    .WI_1   (2),
-                    .WF_1   (16),
-                    .WI_2   (2),
-                    .WF_2   (16),
-                    .WI_O   (3),
-                    .WF_O   (16))
+                    .WI_1   (4),
+                    .WF_1   (14),
+                    .WI_2   (4),
+                    .WF_2   (14),
+                    .WI_O   (5),
+                    .WF_O   (14))
                 first_sum (
                     .in_1       (notes_0[k]),
                     .in_2       (notes_0[k+1]),
@@ -59,12 +59,12 @@ module sum_notes_16 #(
     generate
         for (f=0; f<8; f=f+2) begin
             fixed_point_adder #(
-                    .WI_1   (3),
-                    .WF_1   (16),
-                    .WI_2   (3),
-                    .WF_2   (16),
-                    .WI_O   (4),
-                    .WF_O   (16))
+                    .WI_1   (5),
+                    .WF_1   (14),
+                    .WI_2   (5),
+                    .WF_2   (14),
+                    .WI_O   (6),
+                    .WF_O   (14))
                 second_sum (
                     .in_1       (notes_1[f]),
                     .in_2       (notes_1[f+1]),
@@ -78,12 +78,12 @@ module sum_notes_16 #(
     generate
         for (h=0; h<4; h=h+2) begin
             fixed_point_adder #(
-                    .WI_1   (4),
-                    .WF_1   (16),
-                    .WI_2   (4),
-                    .WF_2   (16),
-                    .WI_O   (5),
-                    .WF_O   (16))
+                    .WI_1   (6),
+                    .WF_1   (14),
+                    .WI_2   (6),
+                    .WF_2   (14),
+                    .WI_O   (7),
+                    .WF_O   (14))
                 second_sum (
                     .in_1       (notes_2[h]),
                     .in_2       (notes_2[h+1]),
@@ -94,12 +94,12 @@ module sum_notes_16 #(
     endgenerate
 
     fixed_point_adder #(
-            .WI_1   (5),
-            .WF_1   (16),
-            .WI_2   (5),
-            .WF_2   (16),
-            .WI_O   (6),
-            .WF_O   (18))
+            .WI_1   (7),
+            .WF_1   (14),
+            .WI_2   (7),
+            .WF_2   (14),
+            .WI_O   (8),
+            .WF_O   (16))
         third_sum (
             .in_1       (notes_3[0]),
             .in_2       (notes_3[1]),

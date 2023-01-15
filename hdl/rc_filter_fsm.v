@@ -31,8 +31,9 @@ module rc_filter_fsm #(
     localparam      [ENV_BITS-1:0]  ATTACK_STEP     = 24'b01_0000_0000_0000_0000_0000_00;
     localparam      [ENV_BITS-1:0]  DECAY_STEP      = 24'b00_1100_0000_0000_0000_0000_00;
     localparam      [ENV_BITS-1:0]  RELEASE_STEP    = 24'b00_0000_0000_0000_0000_0000_00;
-    localparam      [ENV_BITS-1:0]  MAX             = 24'b00_1111_0000_0000_0000_0000_00;
-    localparam      [ENV_BITS-1:0]  MIN             = 24'b00_0000_0000_0000_0001_0000_00;
+
+    localparam      [ENV_BITS-1:0]  MAX             = 24'b0000_1111_0000_0000_0000_0000;
+    localparam      [ENV_BITS-1:0]  MIN             = 24'b0000_0000_0000_0000_0001_0000;
     localparam      [1:0]           S_IDLE          = 2'b00;
     localparam      [1:0]           S_ATTACK        = 2'b01;
     localparam      [1:0]           S_DECAY         = 2'b10;
@@ -52,10 +53,9 @@ module rc_filter_fsm #(
     assign attack = velocity[31:16];
     assign decay = velocity[15:0];
 
-    assign  product = sum >>> tau;
-    assign  sum = step_delay - env_delay;
+    assign  product  = sum >>> tau;
+    assign  sum      = step_delay - env_delay;
     assign  envelope = product + env_delay;
-    // assign  available = ((state == S_IDLE) & ~en) ? 1 : 0;
     assign available = avail;
 
     always @(posedge clk) begin

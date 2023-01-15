@@ -43,12 +43,12 @@ module amp_shaper #
         );
 
     fixed_point_mult #(
-            .WI_1   (2),
-            .WF_1   (ENV_BITS-2),
+            .WI_1   (4),
+            .WF_1   (ENV_BITS-4),
             .WI_2   (2),
             .WF_2   (NUM_BITS_WORD-2),
-            .WI_O   (2),
-            .WF_O   (NUM_BITS_WORD-2))
+            .WI_O   (4),
+            .WF_O   (NUM_BITS_WORD-4))
         amplitude_shaper (
             .in_1       (envelope),
             .in_2       (word_in),

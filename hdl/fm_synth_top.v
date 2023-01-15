@@ -153,20 +153,18 @@ module fm_synth_top #(
 
     // SCALE MODULATING SIGNAL TO USER DEFINED VALUED
     fixed_point_mult #(
-            .WI_1   (6),
-            .WF_1   (18),
-            .WI_2   (4),
-            .WF_2   (4),
-            .WI_O   (6),
-            .WF_O   (18))
+            .WI_1   (8),
+            .WF_1   (16),
+            .WI_2   (8),
+            .WF_2   (0),
+            .WI_O   (10),
+            .WF_O   (14))
         volume (
             .in_1       (final_word),
             .in_2       (volume_reg),
             .data_out   (final_word_vol),
             .ovf        ()
         );
-
-    // assign final_word_vol = final_word;
 
     // TRANSMIT AUDIO WORDS
     i2s_transmitter #(

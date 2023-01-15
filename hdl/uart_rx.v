@@ -96,11 +96,11 @@ module uart_rx # (
 
                         if(bit_cnt==BIT_COUNT) begin
                             if (LSB_FIRST == 1) begin
-                                data[bits_rx]   <= i_data;              //use this line to receive LSB first
+                                data[bits_rx]   <= i_data;
                             end
 
                             else if (LSB_FIRST == 0) begin
-                                data[(NUM_BITS-1)-bits_rx] <= i_data;   //use this line to receive MSB first
+                                data[(NUM_BITS-1)-bits_rx] <= i_data;
                             end
 
                             bit_cnt         <= 0;

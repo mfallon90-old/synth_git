@@ -76,8 +76,10 @@ info linked_list::in_use(unsigned int note) {
 void linked_list::note_on(car_mod note, unsigned char velocity) {
         info note_info = in_use(note.carrier);
         node *tmp = head;
-        unsigned int vel = ((unsigned int) velocity << 24);
-        vel = vel | velocity << 7;
+        unsigned int attack = velocity << 24;
+        unsigned int decay = velocity << 6;
+        // unsigned int decay = velocity << 7;
+        unsigned int velocity_in = attack | decay;
 
     // If the note is not currently being played, then select the first
     // available channel and play the note
@@ -87,7 +89,7 @@ void linked_list::note_on(car_mod note, unsigned char velocity) {
                 tmp->note = note.carrier;
                 tmp->mod = note.modulator;
                 tmp->index = note.index;
-                Xil_Out32(VEL_BASE_ADDR + 4*tmp->chan_num, vel);
+                Xil_Out32(VEL_BASE_ADDR + 4*tmp->chan_num, velocity_in);
                 Xil_Out32(MOD_BASE_ADDR + 4*tmp->chan_num, note.modulator);
                 Xil_Out32(CAR_BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
                 tmp->available = false;
@@ -105,6 +107,7 @@ void linked_list::note_on(car_mod note, unsigned char velocity) {
     else if (note_info.awaiting_rst != 0) {
         tmp = note_info.index;
         tmp->awaiting_reset = 0;
+        Xil_Out32(VEL_BASE_ADDR + 4*tmp->chan_num, velocity_in);
         Xil_Out32(CAR_BASE_ADDR + 4*tmp->chan_num, (note.carrier | MASK_ON));
         tmp->enable = true;
     }
