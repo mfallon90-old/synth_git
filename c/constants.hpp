@@ -57,13 +57,14 @@
     #define S_NOTE_ON           1
     #define S_NOTE_OFF          2
     #define S_CONTROL_CHANGE    3
-    #define S_VELOCITY          4
-    #define S_PATCH             5
-    #define S_VOLUME            6
-    #define S_MODULATE          7
-    #define S_MOD_AMP           8
-    #define S_PITCH_BEND_LSB    9
-    #define S_PITCH_BEND_MSB    10
+    #define S_VELOCITY_ON       4
+    #define S_VELOCITY_OFF      5
+    #define S_PATCH             6
+    #define S_VOLUME            7
+    #define S_MODULATE          8
+    #define S_MOD_AMP           9
+    #define S_PITCH_BEND_LSB    10
+    #define S_PITCH_BEND_MSB    11
 
     #define NUM_CHANNELS 16
     #define MASK_ON  0X80000000

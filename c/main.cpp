@@ -161,7 +161,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
             if (notes.index != 255) {
                 channels.note_on(notes);
             }
-            state = S_VELOCITY;
+            state = S_VELOCITY_ON;
             break;
 
 
@@ -171,7 +171,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
             if (notes.index != 255) {
                 channels.note_off(notes);
             }
-            state = S_VELOCITY;
+            state = S_VELOCITY_OFF;
             break;
 
 
@@ -220,7 +220,13 @@ void UART_IRQ_Handler(void *CallbackRef) {
             break;
 
 
-        case S_VELOCITY:
+        case S_VELOCITY_ON:
+            velocity = byte_in;
+            state = S_STATUS;
+            break;
+
+
+        case S_VELOCITY_OFF:
             velocity = byte_in;
             state = S_STATUS;
             break;
