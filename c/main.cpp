@@ -157,10 +157,10 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
         case S_NOTE_ON:
             on_note = byte_in;
-            notes = decode_note(on_note, patch, mod_byte);
-            if (notes.index != 255) {
-                channels.note_on(notes);
-            }
+            // notes = decode_note(on_note, patch, mod_byte);
+            // if (notes.index != 255) {
+            //     channels.note_on(notes);
+            // }
             state = S_VELOCITY_ON;
             break;
 
@@ -222,6 +222,10 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
         case S_VELOCITY_ON:
             velocity = byte_in;
+            notes = decode_note(on_note, patch, mod_byte);
+            if (notes.index != 255) {
+                channels.note_on(notes, velocity);
+            }
             state = S_STATUS;
             break;
 
