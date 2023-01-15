@@ -61,6 +61,7 @@ module fm_synth_wrapper #(
 
     wire    [NUM_CHANNELS*NUM_BITS-1:0] carriers;
     wire    [NUM_CHANNELS*NUM_BITS-1:0] modulators;
+    wire    [NUM_CHANNELS*NUM_BITS-1:0] velocities;
     wire    [4:0]                       attack_tau;
     wire    [4:0]                       decay_tau;
     wire    [4:0]                       release_tau;
@@ -97,6 +98,7 @@ module fm_synth_wrapper #(
             .s_axi_rready   (s_axi_rready),
             .carrier_out    (carriers),
             .modulator_out  (modulators),
+            .velocity_out   (velocities),
             .attack_tau     (attack_tau),
             .decay_tau      (decay_tau),
             .release_tau    (release_tau),
@@ -119,6 +121,7 @@ module fm_synth_wrapper #(
             .rst            (sys_rst),
             .carrier_in     (carriers),
             .modulator_in   (modulators),
+            .velocity_in    (velocities),
             .attack_tau     (attack_tau),
             .decay_tau      (decay_tau),
             .release_tau    (release_tau),

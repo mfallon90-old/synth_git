@@ -18,6 +18,7 @@ module rc_filter_fsm #(
     input   wire                        rst,
     input   wire                        en,
     input   wire                        on,
+    input   wire        [31:0]          velocity,
     input   wire        [TAU_BITS-1:0]  attack_tau,
     input   wire        [TAU_BITS-1:0]  decay_tau,
     input   wire        [TAU_BITS-1:0]  release_tau,
@@ -45,6 +46,12 @@ module rc_filter_fsm #(
     wire    signed  [ENV_BITS-1:0]  sum;
     reg             [TAU_BITS-1:0]  tau;
 
+    wire            [15:0]          attack;
+    wire            [15:0]          decay;
+
+    assign attack = velocity[31:16];
+    assign decay = velocity[15:0];
+
     assign  product = sum >>> tau;
     assign  sum = step_delay - env_delay;
     assign  envelope = product + env_delay;
@@ -66,7 +73,8 @@ module rc_filter_fsm #(
                 S_IDLE : begin
                     if (en) begin
                         state       <= S_ATTACK;
-                        step_delay  <= ATTACK_STEP;
+                        // step_delay  <= ATTACK_STEP;
+                        step_delay  <= {attack, 8'd0};
                         tau         <= attack_tau;
                     end
                 end
@@ -78,7 +86,8 @@ module rc_filter_fsm #(
                     
                     if (envelope > MAX) begin
                         state       <= S_DECAY;
-                        step_delay  <= DECAY_STEP;
+                        // step_delay  <= DECAY_STEP;
+                        step_delay  <= {decay, 8'd0};
                         tau         <= decay_tau;
                     end
 
@@ -108,7 +117,8 @@ module rc_filter_fsm #(
 
                     if (en) begin
                         state       <= S_ATTACK;
-                        step_delay  <= ATTACK_STEP;
+                        // step_delay  <= ATTACK_STEP;
+                        step_delay  <= {attack, 8'd0};
                         tau         <= attack_tau;
                     end
 

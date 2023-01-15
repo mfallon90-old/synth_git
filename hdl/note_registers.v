@@ -24,6 +24,7 @@ module note_registers #(
     input   wire    [NUM_CHANNELS-1:0]  reg_en,
     input   wire    [NUM_CHANNELS-1:0]  note_en,
     input   wire    [NUM_BITS_IN-1:0]   note_in,
+    input   wire    [511:0]             velocity_in,
     input   wire    [NUM_BITS_TAU-1:0]  attack_tau,
     input   wire    [NUM_BITS_TAU-1:0]  decay_tau,
     input   wire    [NUM_BITS_TAU-1:0]  release_tau,
@@ -32,6 +33,7 @@ module note_registers #(
     );
 
     reg     [NUM_BITS_IN-1:0]   notes           [0:NUM_CHANNELS-1];
+    wire    [31:0]              velocities      [0:NUM_CHANNELS-1];
     wire    [NUM_BITS_IN-1:0]   notes_shaped    [0:NUM_CHANNELS-1];
     wire    [`TOTAL_BITS-1:0]   notes_shaped_flat;
     reg     [NUM_BITS_OUT-1:0]  note_out_reg;
@@ -64,6 +66,7 @@ module note_registers #(
     generate
         for (j=0; j<NUM_CHANNELS; j=j+1) begin
             assign notes_shaped_flat[NUM_BITS_IN*(j+1)-1:NUM_BITS_IN*j] = notes_shaped[j];
+            assign velocities[j] = velocity_in[32*(j+1)-1:32*j];
 
             amp_shaper #(
                     .NUM_BITS_TAU   (NUM_BITS_TAU),
@@ -73,6 +76,7 @@ module note_registers #(
                     .rst            (rst),
                     .ready          (reg_en[j]),
                     .note_en        (note_en[j]),
+                    .velocity       (velocities[j]),
                     .attack_tau     (attack_tau),
                     .decay_tau      (decay_tau),
                     .release_tau    (release_tau),
