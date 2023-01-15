@@ -49,6 +49,10 @@ int main(void)
 
     Xil_Out32(CTRL_REG_ADDR, TAU_MID);
 
+    for (int i=0; i<NUM_CHANNELS; i=i+1) {
+        Xil_Out32(VEL_BASE_ADDR + 4*i, VELOCITY_INIT);
+    }
+
     while(1){}
 
 return 1;
