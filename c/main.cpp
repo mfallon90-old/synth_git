@@ -47,7 +47,7 @@ int main(void)
         return XST_FAILURE;
     }
 
-    synth_init(CTRL_INIT_SIN);
+    synth_init(CTRL_INIT_SAW);
 
     while(1){}
 

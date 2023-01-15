@@ -46,7 +46,7 @@ module axi_lite_cs_reg #(
     output  wire    [4:0]                   release_tau,
     output  wire    [7:0]                   mod_amplitude,
     output  wire    [7:0]                   volume_reg,
-    output  wire                            wave_sel
+    output  wire    [1:0]                   wave_sel
     );
 
     // 31   mod_amp     vol    a_tau   d_tau   r_tau
@@ -143,9 +143,9 @@ module axi_lite_cs_reg #(
                             velocity_7,  velocity_6,  velocity_5,  velocity_4,
                             velocity_3,  velocity_2,  velocity_1,  velocity_0};
 
-    assign wave_sel         = control_reg[31];
-    assign mod_amplitude    = control_reg[30:23];
-    assign volume_reg       = control_reg[22:15];
+    assign wave_sel         = control_reg[31:30];
+    assign mod_amplitude    = {1'b0, control_reg[28:22]};
+    assign volume_reg       = {1'b0, control_reg[21:15]};
     assign attack_tau       = control_reg[14:10];
     assign decay_tau        = control_reg[9:5];
     assign release_tau      = control_reg[4:0];

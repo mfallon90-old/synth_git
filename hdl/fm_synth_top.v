@@ -24,7 +24,7 @@ module fm_synth_top #(
     )(
     input   wire                        clk,
     input   wire                        rst,
-    input   wire                        wave_sel,
+    input   wire    [1:0]               wave_sel,
     input   wire    [`TOTAL_BITS-1:0]   carrier_in,
     input   wire    [`TOTAL_BITS-1:0]   modulator_in,
     input   wire    [`TOTAL_BITS-1:0]   velocity_in,

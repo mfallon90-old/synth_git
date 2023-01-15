@@ -67,7 +67,7 @@ module fm_synth_wrapper #(
     wire    [4:0]                       release_tau;
     wire    [7:0]                       mod_amplitude;
     wire    [7:0]                       volume_reg;
-    wire                                wave_sel;
+    wire    [1:0]                       wave_sel;
 
 
     // CONTROL AND STATUS REGISTERS
