@@ -44,17 +44,15 @@ module phase_acc #(
                 else if (acc_en[i]) begin
                     acc[i]  <= acc[i] + phi_in;
                 end
-                
             end
         end
     end
 
     always @(*) begin
-            for (i=0; i<NUM_CHANNELS; i=i+1) begin
-                if (curr_note[i]) begin
-                    phi_out  = acc[i];
-                end
+        for (i=0; i<NUM_CHANNELS; i=i+1) begin
+            if (curr_note[i]) begin
+                phi_out  = acc[i];
             end
+        end
     end
-    
 endmodule

@@ -97,7 +97,7 @@ module fm_synth_top #(
         modulating_signal (
             .clk            (clk),
             .rst            (rst),
-            .wave_sel       (wave_sel),
+            .wave_sel       (0),
             .acc_en         (mod_acc_en),
             .acc_clr        (mod_acc_clr),
             .curr_note      (curr_note),

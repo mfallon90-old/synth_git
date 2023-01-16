@@ -1,75 +1,58 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Sun Jan 15 22:05:25 2023
+[*] Sun Jan 15 23:58:51 2023
 [*]
 [dumpfile] "C:\Users\mfall\Documents\School\year_4\senior_design\synth_git\test\synth_test\dump.vcd"
-[dumpfile_mtime] "Sun Jan 15 22:05:16 2023"
-[dumpfile_size] 57065308
+[dumpfile_mtime] "Sun Jan 15 23:55:46 2023"
+[dumpfile_size] 28218947
 [savefile] "C:\Users\mfall\Documents\School\year_4\senior_design\synth_git\test\synth_test\waves.gtkw"
-[timestart] 0
+[timestart] 42900000
 [size] 1920 1137
 [pos] -1 -1
-*-27.004869 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.340088 133475000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] fm_synth_wrapper.
-[sst_width] 197
-[signals_width] 246
+[treeopen] fm_synth_wrapper.synth.
+[treeopen] fm_synth_wrapper.synth.carrier_signal.
+[treeopen] fm_synth_wrapper.synth.note_sum_point.genblk1[0].
+[sst_width] 309
+[signals_width] 430
 [sst_expanded] 1
 [sst_vpaned_height] 342
 @420
-fm_synth_wrapper.synth.COS_LUT_VALUES
-fm_synth_wrapper.synth.DEPTH
-fm_synth_wrapper.synth.LATENCY
-fm_synth_wrapper.synth.NUM_BITS
-fm_synth_wrapper.synth.NUM_BITS_DAC
-fm_synth_wrapper.synth.NUM_BRAM
-fm_synth_wrapper.synth.NUM_CHANNELS
-fm_synth_wrapper.synth.WF_OUT
-fm_synth_wrapper.synth.WIDTH
-fm_synth_wrapper.synth.WI_OUT
+fm_synth_wrapper.synth.carrier_signal.COS_LUT_VALUES
+fm_synth_wrapper.synth.carrier_signal.DEPTH
+fm_synth_wrapper.synth.carrier_signal.HI
+fm_synth_wrapper.synth.carrier_signal.LO
+fm_synth_wrapper.synth.carrier_signal.MAX
+fm_synth_wrapper.synth.carrier_signal.NUM_BITS
+fm_synth_wrapper.synth.carrier_signal.NUM_CHANNELS
+fm_synth_wrapper.synth.carrier_signal.WIDTH
 @22
-fm_synth_wrapper.synth.attack_tau[4:0]
-fm_synth_wrapper.synth.available[15:0]
-fm_synth_wrapper.synth.car_acc_en[15:0]
-fm_synth_wrapper.synth.car_out[17:0]
-fm_synth_wrapper.synth.car_reg_en[15:0]
-fm_synth_wrapper.synth.carrier_in[511:0]
-fm_synth_wrapper.synth.carrier_word[31:0]
+fm_synth_wrapper.synth.carrier_signal.acc_clr[15:0]
+fm_synth_wrapper.synth.carrier_signal.acc_en[15:0]
+fm_synth_wrapper.synth.carrier_signal.addr[16:0]
+fm_synth_wrapper.synth.carrier_signal.addr_mapped[14:0]
 @28
-fm_synth_wrapper.synth.clk
+fm_synth_wrapper.synth.carrier_signal.clk
 @22
-fm_synth_wrapper.synth.curr_note[15:0]
-fm_synth_wrapper.synth.decay_tau[4:0]
-@40010421
-[fpshift_count] 14
-fm_synth_wrapper.synth.final_word[23:0]
-@22
-fm_synth_wrapper.synth.final_word_vol[23:0]
+fm_synth_wrapper.synth.carrier_signal.curr_note[15:0]
+@10024
+fm_synth_wrapper.synth.carrier_signal.phi_out[31:0]
 @28
-fm_synth_wrapper.synth.interrupt_out
+fm_synth_wrapper.synth.carrier_signal.rst
+@40010420
+[fpshift_count] 16
+fm_synth_wrapper.synth.carrier_signal.tri_down[17:0]
+[fpshift_count] 16
+fm_synth_wrapper.synth.carrier_signal.tri_up[17:0]
 @22
-fm_synth_wrapper.synth.mod_acc_clr[15:0]
-fm_synth_wrapper.synth.mod_acc_en[15:0]
-fm_synth_wrapper.synth.mod_amplitude[7:0]
-fm_synth_wrapper.synth.mod_reg_en[15:0]
-fm_synth_wrapper.synth.mod_sig[17:0]
-fm_synth_wrapper.synth.mod_word[31:0]
-fm_synth_wrapper.synth.modulated_tuning_word[31:0]
-fm_synth_wrapper.synth.modulator_in[511:0]
-fm_synth_wrapper.synth.note_en[15:0]
+fm_synth_wrapper.synth.carrier_signal.tuning_word[31:0]
+@40010420
+[fpshift_count] 16
+fm_synth_wrapper.synth.carrier_signal.wave_out[17:0]
 @28
-fm_synth_wrapper.synth.ready
-@22
-fm_synth_wrapper.synth.release_tau[4:0]
-@28
-fm_synth_wrapper.synth.rst
-fm_synth_wrapper.synth.s_clk
-fm_synth_wrapper.synth.s_clk_neg
-fm_synth_wrapper.synth.s_clk_pos
-fm_synth_wrapper.synth.serial_data
-@22
-fm_synth_wrapper.synth.velocity_in[511:0]
-fm_synth_wrapper.synth.volume_reg[7:0]
-@28
-fm_synth_wrapper.synth.word_select
+fm_synth_wrapper.synth.carrier_signal.wave_sel[1:0]
+@29
+fm_synth_wrapper.synth.carrier_signal.quad[1:0]
 [pattern_trace] 1
 [pattern_trace] 0

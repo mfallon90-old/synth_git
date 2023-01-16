@@ -112,7 +112,6 @@ void Synth_IRQ_Handler(void *CallbackRef) {
 unsigned char byte_in = 0;
 unsigned char state = S_STATUS;
 
-unsigned char test[500];
 unsigned char patch_byte;
 unsigned char mode;
 unsigned char status;
@@ -128,6 +127,7 @@ unsigned int  pitch_bend_msb;
 unsigned int  pitch_bend;
 unsigned int  i = 0;
 unsigned char patch = 0;
+struct midi_message midi[1000];
 
 // IRQ Handling function
 void UART_IRQ_Handler(void *CallbackRef) {
@@ -135,8 +135,12 @@ void UART_IRQ_Handler(void *CallbackRef) {
     car_mod notes;
 
     byte_in = (char) Xil_In32(UART_ADDR);
-    test[i] = byte_in;
-    i = i+1;
+    
+    switch (i) {
+        case 0 : midi->byte_1 = byte_in; i = i+1;   break;
+        case 1 : midi->byte_2 = byte_in; i = i+1;   break;
+        case 2 : midi->byte_3 = byte_in; i = 0;     break;
+    }
 
     switch (state) {
         case S_STATUS:

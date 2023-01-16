@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1673900576" />
+    <testcase name="read_write" classname="test_fm_synth" file="C:\Users\mfall\Documents\School\year_4\senior_design\synth_git\test\synth_test\test_fm_synth.py" lineno="11" time="59.75189566612244" sim_time_ns="1046895.001" ratio_time="17520.699374121425" />
+  </testsuite>
+</testsuites>

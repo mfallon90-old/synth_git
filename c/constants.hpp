@@ -36,6 +36,12 @@
         unsigned char index = 255;
     };
 
+    struct midi_message {
+        unsigned char byte_1 = 0;
+        unsigned char byte_2 = 0;
+        unsigned char byte_3 = 0;
+    };
+
     extern node *head, *tail;
     extern info note_info;
     extern car_mod notes;
