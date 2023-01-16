@@ -18,8 +18,9 @@ module note_gen #(
     output  reg     [WIDTH-1:0]             wave_out
     );
 
-    localparam HI = 18'b010000000000000000;
-    localparam LO = 18'b110000000000000000;
+    localparam MAX  = 18'b111111111111111111;
+    localparam HI   = 18'b010000000000000000;
+    localparam LO   = 18'b110000000000000000;
 
     wire    [NUM_BITS-1:0]          phi_out;
     wire    [`ADDR_WIDTH+1:0]       addr;
@@ -27,14 +28,23 @@ module note_gen #(
     wire    [WIDTH-1:0]             lut_out;
     wire    [WIDTH-1:0]             sin_out;
     wire    [WIDTH-1:0]             sqr_out;
+    wire    [WIDTH-1:0]             tri_out;
+    wire    [WIDTH-1:0]             tri_up;
+    wire    [WIDTH-1:0]             tri_down;
+    wire    [1:0]                   quad;
 
     assign addr = phi_out[NUM_BITS-1:NUM_BITS-`ADDR_WIDTH-2];
+    assign quad = phi_out[NUM_BITS-1:NUM_BITS-2];
+    assign tri_out = (quad == 2'b11 || quad == 2'b00) ? tri_up : tri_down;
+    assign tri_up = phi_out[NUM_BITS-2:NUM_BITS-WIDTH-1];
+    assign tri_down = MAX - tri_up;
 
     always @(*) begin
         case (wave_sel)
             0 :         wave_out = sin_out;
             1 :         wave_out = phi_out[NUM_BITS-1:NUM_BITS-WIDTH];
             2 :         wave_out = phi_out[NUM_BITS-1] ? LO : HI;
+            3 :         wave_out = tri_out;
             default :   wave_out = sin_out;
         endcase
     end

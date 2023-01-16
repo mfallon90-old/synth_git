@@ -83,6 +83,7 @@ VELOCITY_INIT = (0b0100_0000_0000_0000_0100_0000_0000_0000)
 CTRL_INIT_SIN = (0b00_0001_0000_001_0000_01111_01111_01111)
 CTRL_INIT_SAW = (0b01_0001_0000_001_0000_01111_01111_01111)
 CTRL_INIT_SQR = (0b10_0001_0000_001_0000_01111_01111_01111)
+CTRL_INIT_TRI = (0b11_0001_0000_001_0000_01111_01111_01111)
 
 ON_MASK     = (0b1000_0000_0000_0000_0000_0000_0000_0000)
 OFF_MASK    = (0b0111_1111_1111_1111_1111_1111_1111_1111)
@@ -284,21 +285,11 @@ async def read_write(dut):
     await reset_dut(dut.sys_rst, dut.s_axi_aresetn, 20)
 
     # Initialize synthesizer
-    await synth_init(axi_master, CTRL_INIT_SIN)
+    await synth_init(axi_master, CTRL_INIT_TRI)
 
     await note_on(axi_master, 0, A5, 0, 64)
 
-    await ClockCycles(dut.word_select, 200)
-
-    # Initialize synthesizer
-    await synth_init(axi_master, CTRL_INIT_SAW)
-
-    await ClockCycles(dut.word_select, 200)
-
-    # Initialize synthesizer
-    await synth_init(axi_master, CTRL_INIT_SQR)
-
-    await ClockCycles(dut.word_select, 200)
+    await ClockCycles(dut.word_select, 500)
 
     # await RisingEdge(dut.interrupt)
     # write_op = await axi_master.write(CHAN_1_M_ADDR, NOTE_OFF.to_bytes(4, byteorder = 'little'))
