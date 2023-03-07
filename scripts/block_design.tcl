@@ -40,7 +40,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# axi_uart_wrapper, fm_synth_wrapper
+# axi_uart_wrapper, debounce_pulse, fm_synth_wrapper
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -160,6 +160,7 @@ set bCheckModules 1
 if { $bCheckModules == 1 } {
    set list_check_mods "\ 
 axi_uart_wrapper\
+debounce_pulse\
 fm_synth_wrapper\
 "
 
@@ -236,6 +237,7 @@ proc create_root_design { parentCell } {
    CONFIG.FREQ_HZ {8163265} \
  ] $s_clk
   set serial_data [ create_bd_port -dir O serial_data ]
+  set wave_sel [ create_bd_port -dir I wave_sel ]
   set word_select [ create_bd_port -dir O word_select ]
 
   # Create instance: axi_uart_wrapper_0, and set properties
@@ -245,6 +247,17 @@ proc create_root_design { parentCell } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    } elseif { $axi_uart_wrapper_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  # Create instance: debounce_pulse_0, and set properties
+  set block_name debounce_pulse
+  set block_cell_name debounce_pulse_0
+  if { [catch {set debounce_pulse_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $debounce_pulse_0 eq "" } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
@@ -800,6 +813,9 @@ proc create_root_design { parentCell } {
 
   # Create instance: xlconcat_0, and set properties
   set xlconcat_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0 ]
+  set_property -dict [ list \
+   CONFIG.NUM_PORTS {3} \
+ ] $xlconcat_0
 
   # Create interface connections
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
@@ -810,15 +826,17 @@ proc create_root_design { parentCell } {
 
   # Create port connections
   connect_bd_net -net axi_uart_wrapper_0_midi_intr [get_bd_pins axi_uart_wrapper_0/midi_intr] [get_bd_pins xlconcat_0/In0]
+  connect_bd_net -net debounce_pulse_0_interrupt [get_bd_pins debounce_pulse_0/interrupt] [get_bd_pins xlconcat_0/In2]
   connect_bd_net -net fm_synth_wrapper_0_interrupt [get_bd_pins fm_synth_wrapper_0/interrupt] [get_bd_pins xlconcat_0/In1]
   connect_bd_net -net fm_synth_wrapper_0_s_clk [get_bd_ports s_clk] [get_bd_pins fm_synth_wrapper_0/s_clk]
   connect_bd_net -net fm_synth_wrapper_0_serial_data [get_bd_ports serial_data] [get_bd_pins fm_synth_wrapper_0/serial_data]
   connect_bd_net -net fm_synth_wrapper_0_word_select [get_bd_ports word_select] [get_bd_pins fm_synth_wrapper_0/word_select]
   connect_bd_net -net midi_in_0_1 [get_bd_ports midi_in] [get_bd_pins axi_uart_wrapper_0/midi_in]
-  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports m_clk] [get_bd_pins axi_uart_wrapper_0/s_axi_aclk] [get_bd_pins fm_synth_wrapper_0/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins ps7_0_axi_periph/ACLK] [get_bd_pins ps7_0_axi_periph/M00_ACLK] [get_bd_pins ps7_0_axi_periph/M01_ACLK] [get_bd_pins ps7_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps7_0_22M/slowest_sync_clk]
+  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports m_clk] [get_bd_pins axi_uart_wrapper_0/s_axi_aclk] [get_bd_pins debounce_pulse_0/clk] [get_bd_pins fm_synth_wrapper_0/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins ps7_0_axi_periph/ACLK] [get_bd_pins ps7_0_axi_periph/M00_ACLK] [get_bd_pins ps7_0_axi_periph/M01_ACLK] [get_bd_pins ps7_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps7_0_22M/slowest_sync_clk]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_ps7_0_22M/ext_reset_in]
-  connect_bd_net -net rst_ps7_0_22M_peripheral_aresetn [get_bd_pins axi_uart_wrapper_0/s_axi_aresetn] [get_bd_pins fm_synth_wrapper_0/s_axi_aresetn] [get_bd_pins ps7_0_axi_periph/ARESETN] [get_bd_pins ps7_0_axi_periph/M00_ARESETN] [get_bd_pins ps7_0_axi_periph/M01_ARESETN] [get_bd_pins ps7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_ps7_0_22M/peripheral_aresetn]
+  connect_bd_net -net rst_ps7_0_22M_peripheral_aresetn [get_bd_pins axi_uart_wrapper_0/s_axi_aresetn] [get_bd_pins debounce_pulse_0/rst_n] [get_bd_pins fm_synth_wrapper_0/s_axi_aresetn] [get_bd_pins ps7_0_axi_periph/ARESETN] [get_bd_pins ps7_0_axi_periph/M00_ARESETN] [get_bd_pins ps7_0_axi_periph/M01_ARESETN] [get_bd_pins ps7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_ps7_0_22M/peripheral_aresetn]
   connect_bd_net -net rst_ps7_0_22M_peripheral_reset [get_bd_pins fm_synth_wrapper_0/sys_rst] [get_bd_pins rst_ps7_0_22M/peripheral_reset]
+  connect_bd_net -net wave_sel_1 [get_bd_ports wave_sel] [get_bd_pins debounce_pulse_0/btn_in]
   connect_bd_net -net xlconcat_0_dout [get_bd_pins processing_system7_0/IRQ_F2P] [get_bd_pins xlconcat_0/dout]
 
   # Create address segments
@@ -829,6 +847,7 @@ proc create_root_design { parentCell } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -840,6 +859,4 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
-
-common::send_gid_msg -ssname BD::TCL -id 2053 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Engineer: Michael Fallon
+// Author: Michael Fallon
 //
 // Design Name: FM SYNTHESIZER
 // Module Name: phase_acc

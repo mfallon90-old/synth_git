@@ -3,7 +3,7 @@
 `define C_ADDR_WIDTH  ($clog2(NUM_REG) + 2)
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Engineer: Michael Fallon
+// Author: Michael Fallon
 //
 // Design Name: FM SYNTHESIZER
 // Module Name: fm_synth_wrapper

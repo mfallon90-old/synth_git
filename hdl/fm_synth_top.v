@@ -2,7 +2,7 @@
 `define TOTAL_BITS (NUM_BITS*NUM_CHANNELS)
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Engineer: Michael Fallon
+// Author: Michael Fallon
 //
 // Design Name: FM SYNTHESIZER
 // Module Name: fm_synth_top

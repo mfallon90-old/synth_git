@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
+
 #include "functions.hpp"
 #include "xil_printf.h"
 #include "xil_io.h"
@@ -210,8 +218,6 @@
             case 141 : notes.index = 129; break;
             case 142 : notes.index = 130; break;
             case 143 : notes.index = 131; break;
-
-
 
             default  : notes.index = 255;   break;
         }

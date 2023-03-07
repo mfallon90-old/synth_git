@@ -1,6 +1,14 @@
 
 `timescale 1 ns / 1 ps
 
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
+
 module axi_uart_wrapper #(
     parameter integer C_DATA_WIDTH      = 32,
     parameter integer C_ADDR_WIDTH      = 4,

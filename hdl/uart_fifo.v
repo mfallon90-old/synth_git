@@ -1,12 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: San Diego State University
-// Engineer: Michael Fallon
+// Author: Michael Fallon
 // 
-// Create Date: 11/02/2021 06:12:08 AM
-// Design Name: UART
-// Tool Versions: Vivado 2020.2
-// Description: 
 // 
 // Dependencies: 
 // 

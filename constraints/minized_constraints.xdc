@@ -168,8 +168,8 @@ set_property IOSTANDARD LVCMOS33 [get_ports serial_data]
 # set_property PACKAGE_PIN P14 [get_ports ADC_in_v_n]
 # set_property IOSTANDARD LVCMOS33 [get_ports ADC_in_v_n]
 
-# set_property PACKAGE_PIN N11 [get_ports PMOD2_PIN3]
-# set_property IOSTANDARD LVCMOS33 [get_ports PMOD2_PIN3]
+set_property PACKAGE_PIN N11 [get_ports wave_sel]
+set_property IOSTANDARD LVCMOS33 [get_ports wave_sel]
 
 # set_property PACKAGE_PIN N12 [get_ports PMOD2_PIN4]
 # set_property IOSTANDARD LVCMOS33 [get_ports PMOD2_PIN4]

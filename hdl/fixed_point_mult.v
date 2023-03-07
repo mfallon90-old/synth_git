@@ -1,15 +1,21 @@
 `timescale 1ns / 1ps
 
-module fixed_point_mult #
-    (
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
+
+module fixed_point_mult #(
     parameter   WI_1    = 3,
     parameter   WF_1    = 5,
     parameter   WI_2    = 3,
     parameter   WF_2    = 5,
     parameter   WI_O    = WI_1+WI_2,
     parameter   WF_O    = WF_1+WF_2
-    )
-    (
+    )(
     input   wire    signed  [WI_1+WF_1-1:0] in_1,
     input   wire    signed  [WI_2+WF_2-1:0] in_2,
     output  reg     signed  [WI_O+WF_O-1:0] data_out,

@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
+
 #include "xparameters.h"
 #include "xil_printf.h"
 #include "xil_exception.h"
@@ -11,50 +19,55 @@
 #include "linked_list.hpp"
 #include "functions.hpp"
 
-//FPGA PL BRAM Controller Interrupt ID
-#define FPGA_SYNTH_INTR_ID XPAR_FABRIC_FM_SYNTH_WRAPPER_0_INTERRUPT_INTR
-
-//FPGA PL UART Interrupt ID
-#define FPGA_UART_INTR_ID XPAR_FABRIC_AXI_UART_WRAPPER_0_MIDI_INTR_INTR
-
-//Interrupt Controller ID
+/*
+General Interrupt Controller definitions and functions, these are necessary
+to use interrupts in the zynq architecture
+    -GIC_DEVICE_ID  : used to specify general interrupt controller in device
+    -INTC_HANDLER   : used to specify interrupt handler function
+    -GIC_Setup      : function to intialize interrupt controller
+    -GIC            : instance of the General Interrupt Controller
+*/
 #define GIC_DEVICE_ID XPAR_SCUGIC_0_DEVICE_ID
-
-//Interrupt Handler
 #define INTC_HANDLER XScuGic_InterruptHandler
-
-// IRQ Handling Function
-void Synth_IRQ_Handler(void *CallbackRef);
-
-// IRQ Handling Function
-void UART_IRQ_Handler(void *CallbackRef);
-
-// GIC Configuration
-static int GIC_Setup(XScuGic* GicInst, u16 IntrId_1, u16 IntrId_2);
-
-// Instance of the General Interrupt Controller
+static int GIC_Setup(XScuGic* GicInst, u16 IntrId_1, u16 IntrId_2, u16 IntrId_3);
 XScuGic GIC;
 
+/*
+Specific Interrupt definitions and functions unique to this design, one per interrupt
+    -Interrupt ID's : used to address specific interrupts in build
+    -Interrupt handler functions : user defined functions to service IRQ
+*/
+#define FPGA_SYNTH_INTR_ID XPAR_FABRIC_FM_SYNTH_WRAPPER_0_INTERRUPT_INTR
+#define FPGA_UART_INTR_ID XPAR_FABRIC_AXI_UART_WRAPPER_0_MIDI_INTR_INTR
+#define FPGA_WAVE_SEL_INTR_ID XPAR_FABRIC_DEBOUNCE_PULSE_0_INTERRUPT_INTR
+void Synth_IRQ_Handler(void *CallbackRef);
+void UART_IRQ_Handler(void *CallbackRef);
+void Wave_Sel_IRQ_Handler(void *CallbackRef);
+
+// Global linked list
 linked_list channels;
 
-int main(void)
-{
+int main(void) {
 
+    // Used to verify correct initialization of interrupt controller
     int Status;
-    Status = GIC_Setup(&GIC, FPGA_SYNTH_INTR_ID, FPGA_UART_INTR_ID);
+    Status = GIC_Setup(&GIC, FPGA_SYNTH_INTR_ID, FPGA_UART_INTR_ID, FPGA_WAVE_SEL_INTR_ID);
 
     if (Status != XST_SUCCESS) {
         return XST_FAILURE;
     }
 
-    synth_init(CTRL_INIT_SAW);
+    // Initialize synthesizer
+    synth_init(CTRL_INIT);
 
+    // Infinite while loop for
+    // real-time embedded system
     while(1){}
 
 return 1;
 }
 
-static int GIC_Setup(XScuGic *GicInst, u16 IntrId_1, u16 IntrId_2) {
+static int GIC_Setup(XScuGic *GicInst, u16 IntrId_1, u16 IntrId_2, u16 IntrId_3) {
     int Status;
 
     XScuGic_Config *IntcConfig;
@@ -73,6 +86,7 @@ static int GIC_Setup(XScuGic *GicInst, u16 IntrId_1, u16 IntrId_2) {
 
     XScuGic_SetPriorityTriggerType(GicInst, IntrId_1, 0xA0, 0x3);
     XScuGic_SetPriorityTriggerType(GicInst, IntrId_2, 0xA0, 0x3);
+    XScuGic_SetPriorityTriggerType(GicInst, IntrId_3, 0xA0, 0x3);
 
     //Connect the interrupt handler to the GIC.
     Status = XScuGic_Connect(GicInst, IntrId_1, (Xil_ExceptionHandler)Synth_IRQ_Handler, 0);
@@ -86,9 +100,16 @@ static int GIC_Setup(XScuGic *GicInst, u16 IntrId_1, u16 IntrId_2) {
         return Status;
     }
 
+    //Connect the interrupt handler to the GIC.
+    Status = XScuGic_Connect(GicInst, IntrId_3, (Xil_ExceptionHandler)Wave_Sel_IRQ_Handler, 0);
+    if (Status != XST_SUCCESS) {
+        return Status;
+    }
+
     //Enable the interrupt for this specific device.
     XScuGic_Enable(GicInst, IntrId_1);
     XScuGic_Enable(GicInst, IntrId_2);
+    XScuGic_Enable(GicInst, IntrId_3);
 
     //Initialize the exception table.
     Xil_ExceptionInit();
@@ -100,6 +121,30 @@ static int GIC_Setup(XScuGic *GicInst, u16 IntrId_1, u16 IntrId_2) {
     Xil_ExceptionEnable();
 
 return XST_SUCCESS;
+}
+
+// IRQ Handling function
+void Wave_Sel_IRQ_Handler(void *callbackRef){
+    static unsigned char wave_sel = 0;
+    unsigned int ctrl_reg = 0;
+    unsigned int ctrl_reg_mskd = 0;
+
+    ctrl_reg = Xil_In32(CTRL_REG_ADDR);
+    ctrl_reg_mskd = WAVE_SEL_MASK & ctrl_reg;
+
+    if (wave_sel < 3) {
+        wave_sel = wave_sel + 1;
+    }
+    else {
+        wave_sel = 0;
+    }
+
+    switch(wave_sel) {
+        case 0 : Xil_Out32(CTRL_REG_ADDR, ctrl_reg_mskd | SIN_WAVE_MASK);    break;
+        case 1 : Xil_Out32(CTRL_REG_ADDR, ctrl_reg_mskd | SAW_WAVE_MASK);    break;
+        case 2 : Xil_Out32(CTRL_REG_ADDR, ctrl_reg_mskd | SQR_WAVE_MASK);    break;
+        case 3 : Xil_Out32(CTRL_REG_ADDR, ctrl_reg_mskd | TRI_WAVE_MASK);    break;
+    }
 }
 
 // IRQ Handling function

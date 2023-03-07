@@ -1,3 +1,10 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
 
 #ifndef MYLIB_CONSTANTS_H
 #define MYLIB_CONSTANTS_H
@@ -12,6 +19,17 @@
     //UART Base Address
     #define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
 
+    /*
+    Basic structure for linked list, one is created for each channel in synthesizer. 
+    Holds information regarding current state of channel
+         -chan_num          : channel number
+         -note              : holds tuning word for carrier note
+         -mod               : holds tuning word for modulator note
+         -index             : index to select carrier note from array
+         -awaiting_reset    : set to 1 after note off from midi and reset to zero by interrupt
+         -available         : set to 1 if channel not in use
+         -enable            : set to 1 if channel in use, set to 0 to begin note off decay
+    */
     struct node {
         unsigned int chan_num = 0;
         unsigned int note = 0;
@@ -23,6 +41,12 @@
         struct node *next;
     };
 
+    /*
+    Structure to hold information regarding a specific channel. Used when traversing linked list
+        -rst_cnt        : hold current place in reset queue so each note is turned off in order
+        -in_use         : boolean to determine if channel is in use
+        -awaiting_rst   : set to 1 after note off from midi and reset to zero by interrupt
+    */
     struct info {
         int rst_cnt = 0;
         bool in_use = false;
@@ -30,12 +54,21 @@
         node *index = NULL;
     };
 
+    /*
+    Used to associate carrier/modulator information with a specific channel
+        -carrier    : tuning word of carrier
+        -modulator  : tuning word of modulator
+        -index      : used to index the tuning word array
+    */
     struct car_mod {
         unsigned int carrier = 0;
         unsigned int modulator = 0;
         unsigned char index = 255;
     };
 
+    /*
+    Simple struct to hold each byte of a midi message
+    */
     struct midi_message {
         unsigned char byte_1 = 0;
         unsigned char byte_2 = 0;
@@ -79,15 +112,28 @@
     #define TAU_ADDR 128
 
     #define VELOCITY_INIT   0b01000000000000000011000000000000
-    #define CTRL_INIT_SIN   0b00000100000010000011110111101111
-    #define CTRL_INIT_SAW   0b01000100000010000011110111101111
-    #define CTRL_INIT_SQR   0b10000100000010000011110111101111
-    #define CTRL_INIT_TRI   0b11000100000010000011110111101111
+
+    #define WAVE_SEL_MASK   0b00111111111111111111111111111111
+    #define SIN_WAVE_MASK   0b00000000000000000000000000000000
+    #define SAW_WAVE_MASK   0b01000000000000000000000000000000
+    #define SQR_WAVE_MASK   0b10000000000000000000000000000000
+    #define TRI_WAVE_MASK   0b11000000000000000000000000000000
+    
+    #define CTRL_INIT       0b00000100000010000011110111101111
 
     #define MOD_AMP_RST 0b11000000001111111111111111111111
     #define VOLUME_RST  0b11111111110000000111111111111111
 
-    // Only valid for a sampling rate of 128KHz
+    /*
+    These tuning words were calculated based on a MATLAB
+    script and are a function of the sampling rate, 
+    number of bits in the phase accumulator, and system
+    clock frequency.
+
+    These tuning words are only valid for a sampling
+    rate of 128KHz. This was chosen to allow for highest
+    possible frequency before aliasing for modulation.
+    */
     #define C0    0b00000000000000110010011010001011
     #define CS0   0b00000000000000110101011010000001
     #define D0    0b00000000000000111000100101010000
@@ -233,6 +279,7 @@
     #define AS11  0b00101100111010001100010011100101
     #define B11   0b00101111100101000110011100001111
 
+    // Tuning word array
     static const unsigned int TUNING_WORD[144] =   {C0,  CS0,  D0,  DS0,  E0,  F0,  FS0,  G0,  GS0,  A0,  AS0,  B0,
                                                     C1,  CS1,  D1,  DS1,  E1,  F1,  FS1,  G1,  GS1,  A1,  AS1,  B1,
                                                     C2,  CS2,  D2,  DS2,  E2,  F2,  FS2,  G2,  GS2,  A2,  AS2,  B2,

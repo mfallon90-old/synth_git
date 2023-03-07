@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include "xil_printf.h"
 #include "xil_io.h"
@@ -72,13 +80,13 @@ info linked_list::in_use(unsigned int note) {
     return note_info;
 }
 
-
+// Traverse through the linked list and play the note on the first
+// available channel
 void linked_list::note_on(car_mod note, unsigned char velocity) {
         info note_info = in_use(note.carrier);
         node *tmp = head;
         unsigned int attack = velocity << 24;
         unsigned int decay = velocity << 6;
-        // unsigned int decay = velocity << 7;
         unsigned int velocity_in = attack | decay;
 
     // If the note is not currently being played, then select the first
@@ -114,7 +122,8 @@ void linked_list::note_on(car_mod note, unsigned char velocity) {
     return;
 }
 
-
+// Traverse the linked list, find which channel
+// is playing the note, and turn it off
 void linked_list::note_off(car_mod note) {
         info note_info = in_use(note.carrier);
         node *tmp = head;
@@ -130,6 +139,8 @@ void linked_list::note_off(car_mod note) {
     return;
 }
 
+// Traverse the linked list and apply the new modulation patch to 
+// every note currently being played
 void linked_list::toggle_modulator(car_mod note, unsigned char patch) {
     node *tmp = head;
     unsigned int mod_word = 0;
@@ -152,6 +163,8 @@ void linked_list::toggle_modulator(car_mod note, unsigned char patch) {
     return;
 }
 
+// Traverse the linked list and apply the new
+// modulation to every note that is being played
 void linked_list::modulate(unsigned char x) {
     node *tmp = head;
     while (tmp != NULL) {
@@ -164,6 +177,7 @@ void linked_list::modulate(unsigned char x) {
     return;
 }
 
+// Apply pitch bend
 void linked_list::bend_pitch(unsigned int x) {
     node *tmp = head;
     unsigned int bend = x & 0x00001FFF;

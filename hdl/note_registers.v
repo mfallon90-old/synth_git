@@ -2,7 +2,7 @@
 `define TOTAL_BITS (NUM_CHANNELS*NUM_BITS_IN)
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Engineer: Michael Fallon
+// Author: Michael Fallon
 //
 // Design Name: FM SYNTHESIZER
 // Module Name: note_registers

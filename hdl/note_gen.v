@@ -1,6 +1,14 @@
 `timescale 1ns / 1ps
 `define ADDR_WIDTH  ($clog2(DEPTH))
 
+//////////////////////////////////////////////////////////////////////////////////
+// Author: Michael Fallon
+// Date : 2/2/23
+// Design Name: FM SYNTHESIZER
+//
+// Description: 
+//////////////////////////////////////////////////////////////////////////////////
+
 module note_gen #(
     parameter   COS_LUT_VALUES  = "lut.mem",
     parameter   WIDTH           = 18,

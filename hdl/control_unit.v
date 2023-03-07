@@ -1,15 +1,11 @@
 `timescale 1ns / 1ps
 `define TOTAL_BITS (NUM_BITS*NUM_CHANNELS)
 `define STEP (6)
-// `define STEP (LATENCY*CLK_RATIO)
 
 //////////////////////////////////////////////////////////////////////////////////
-//
-// Engineer: Michael Fallon
-//
+// Author: Michael Fallon
+// Date : 2/2/23
 // Design Name: FM SYNTHESIZER
-// Module Name: control_unit
-// Tool Versions: Vivado 2020.2
 //
 // Description: 
 //////////////////////////////////////////////////////////////////////////////////
