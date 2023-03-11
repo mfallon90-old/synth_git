@@ -88,8 +88,8 @@
     #define PITCH_BEND              0xE0
 
     #define PATCH                   0x07
-    #define MODULATE                0x0A
-    #define MOD_AMP                 0x0B
+    #define MOD_AMP                 0x0A
+    #define MODULATE                0x0B
     #define VOLUME                  0x5B
 
     #define S_STATUS            0
@@ -100,8 +100,8 @@
     #define S_VELOCITY_OFF      5
     #define S_PATCH             6
     #define S_VOLUME            7
-    #define S_MODULATE          8
-    #define S_MOD_AMP           9
+    #define S_MOD_AMP           8
+    #define S_MODULATE          9
     #define S_PITCH_BEND_LSB    10
     #define S_PITCH_BEND_MSB    11
 
@@ -123,6 +123,7 @@
 
     #define MOD_AMP_RST 0b11000000001111111111111111111111
     #define VOLUME_RST  0b11111111110000000111111111111111
+    #define TAU_RST     0b11111111111111111000000000000000
 
     /*
     These tuning words were calculated based on a MATLAB

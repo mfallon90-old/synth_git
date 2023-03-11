@@ -147,12 +147,7 @@ void linked_list::toggle_modulator(car_mod note, unsigned char patch) {
 
     while (tmp != NULL) {
 
-        if (patch != 0) {
-        mod_word = TUNING_WORD[12*patch+tmp->index];
-        }
-        else {
-            mod_word = 0;
-        }
+        mod_word = TUNING_WORD[(patch-60)+tmp->index];
 
         if (!tmp->available) {
             tmp->mod = mod_word;

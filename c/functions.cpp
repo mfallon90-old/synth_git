@@ -32,7 +32,7 @@
     void decode_mod_amp(unsigned char x) {
         unsigned int mod_amp, mask, reset;
 
-        mask = x << 23;
+        mask = x << 22;
         mod_amp = Xil_In32(CTRL_REG_ADDR);
         reset = MOD_AMP_RST & mod_amp;
 
@@ -40,38 +40,20 @@
         return;
     }
 
-    void decode_patch(unsigned char x, unsigned char* patch) {
+    void decode_tau(unsigned char x) {
+        unsigned int ctrl_reg, mask, reset;
+        x = x >> 2;
+        mask = x;
+        mask = mask | (x << 5);
+        mask = mask | (x << 10);
 
-        if (x < 18) {
-            *patch = 0;
-        }
+        ctrl_reg = Xil_In32(CTRL_REG_ADDR);
+        reset = TAU_RST & ctrl_reg;
 
-        else if (x < 36) {
-            *patch = 1;
-        }
-
-        else if (x < 54) {
-            *patch = 2;
-        }
-
-        else if (x < 72) {
-            *patch = 3;
-        }
-
-        else if (x < 90) {
-            *patch = 4;
-        }
-
-        else if (x < 108) {
-            *patch = 5;
-        }
-
-        else {
-            *patch = 6;
-        }
-
+        Xil_Out32(CTRL_REG_ADDR, mask | reset);
         return;
     }
+
 
    car_mod decode_note(unsigned char x, unsigned char patch, unsigned char mod_byte) {
         car_mod notes;
@@ -224,19 +206,12 @@
 
         if (notes.index != 255) {
             notes.carrier = TUNING_WORD[notes.index];
-            notes.modulator = TUNING_WORD[12*patch+notes.index];
+            notes.modulator = TUNING_WORD[(patch-60)+notes.index];
         }
 
         else {
             notes.carrier = 0;
             notes.modulator = 0;
-        }
-
-        if (patch == 0) {
-            notes.modulator = 0;
-        }
-        else if (patch == 6) {
-            notes.modulator = TUNING_WORD[mod_byte];
         }
 
         return notes;

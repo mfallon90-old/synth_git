@@ -158,8 +158,8 @@ module fm_synth_top #(
     fixed_point_mult #(
             .WI_1   (8),
             .WF_1   (16),
-            .WI_2   (8),
-            .WF_2   (0),
+            .WI_2   (6),
+            .WF_2   (2),
             .WI_O   (10),
             .WF_O   (14))
         volume (

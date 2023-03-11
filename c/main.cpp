@@ -157,7 +157,6 @@ void Synth_IRQ_Handler(void *CallbackRef) {
 unsigned char byte_in = 0;
 unsigned char state = S_STATUS;
 
-unsigned char patch_byte;
 unsigned char mode;
 unsigned char status;
 unsigned char on_note;
@@ -171,7 +170,7 @@ unsigned int  pitch_bend_lsb;
 unsigned int  pitch_bend_msb;
 unsigned int  pitch_bend;
 unsigned int  i = 0;
-unsigned char patch = 0;
+unsigned char patch = 60;
 struct midi_message midi[1000];
 
 // IRQ Handling function
@@ -229,11 +228,8 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
 
         case S_PATCH:
-            patch_byte = byte_in;
-            decode_patch(patch_byte, &patch);
-            if (patch < 6) {
-                channels.toggle_modulator(notes, patch);
-            }
+            patch = byte_in;
+            channels.toggle_modulator(notes, patch);
             state = S_STATUS;
             break;
 
@@ -247,9 +243,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
 
         case S_MODULATE:
             mod_byte = byte_in;
-            if (patch == 6) {
-                channels.modulate(mod_byte);
-            }
+            decode_tau(mod_byte);
             state = S_STATUS;
             break;
 
