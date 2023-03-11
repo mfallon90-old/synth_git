@@ -237,6 +237,7 @@ proc create_root_design { parentCell } {
    CONFIG.FREQ_HZ {8163265} \
  ] $s_clk
   set serial_data [ create_bd_port -dir O serial_data ]
+  set trig_out [ create_bd_port -dir O trig_out ]
   set wave_sel [ create_bd_port -dir I wave_sel ]
   set word_select [ create_bd_port -dir O word_select ]
 
@@ -830,6 +831,7 @@ proc create_root_design { parentCell } {
   connect_bd_net -net fm_synth_wrapper_0_interrupt [get_bd_pins fm_synth_wrapper_0/interrupt] [get_bd_pins xlconcat_0/In1]
   connect_bd_net -net fm_synth_wrapper_0_s_clk [get_bd_ports s_clk] [get_bd_pins fm_synth_wrapper_0/s_clk]
   connect_bd_net -net fm_synth_wrapper_0_serial_data [get_bd_ports serial_data] [get_bd_pins fm_synth_wrapper_0/serial_data]
+  connect_bd_net -net fm_synth_wrapper_0_trig_out [get_bd_ports trig_out] [get_bd_pins fm_synth_wrapper_0/trig_out]
   connect_bd_net -net fm_synth_wrapper_0_word_select [get_bd_ports word_select] [get_bd_pins fm_synth_wrapper_0/word_select]
   connect_bd_net -net midi_in_0_1 [get_bd_ports midi_in] [get_bd_pins axi_uart_wrapper_0/midi_in]
   connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports m_clk] [get_bd_pins axi_uart_wrapper_0/s_axi_aclk] [get_bd_pins debounce_pulse_0/clk] [get_bd_pins fm_synth_wrapper_0/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins ps7_0_axi_periph/ACLK] [get_bd_pins ps7_0_axi_periph/M00_ACLK] [get_bd_pins ps7_0_axi_periph/M01_ACLK] [get_bd_pins ps7_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps7_0_22M/slowest_sync_clk]

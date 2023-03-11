@@ -13,8 +13,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module fm_synth_wrapper #(
-    // parameter   COS_LUT_VALUES  = "C:/Users/mfall/Documents/School/year_4/senior_design/v_3/hdl/lut.mem",
-    parameter   COS_LUT_VALUES  = "lut.mem",
+    parameter   COS_LUT_VALUES  = "C:/Users/mfall/Documents/School/year_4/senior_design/v_3/hdl/lut.mem",
+    // parameter   COS_LUT_VALUES  = "lut.mem",
     parameter   NUM_CHANNELS    = 16,
     parameter   NUM_REG         = 33,
     parameter   LATENCY         = 3,
@@ -56,7 +56,8 @@ module fm_synth_wrapper #(
     output  wire                            word_select,
     output  wire                            serial_data,
     output  wire                            interrupt,
-    output  wire                            s_clk
+    output  wire                            s_clk,
+    output  wire                            trig_out
     );
 
     wire    [NUM_CHANNELS*NUM_BITS-1:0] carriers;
@@ -133,7 +134,8 @@ module fm_synth_wrapper #(
             .word_select    (word_select),
             .serial_data    (serial_data),
             .interrupt_out  (interrupt),
-            .s_clk          (s_clk)
+            .s_clk          (s_clk),
+            .trig_out       (trig_out)
         );
 
     // // Dump waves

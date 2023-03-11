@@ -36,7 +36,8 @@ module fm_synth_top #(
     output  wire                        word_select,
     output  wire                        serial_data,
     output  wire                        interrupt_out,
-    output  wire                        s_clk
+    output  wire                        s_clk,
+    output  wire                        trig_out
     );
 
     localparam DEPTH = NUM_BRAM*1024;
@@ -88,6 +89,18 @@ module fm_synth_top #(
             .s_clk_neg      (s_clk_neg)
         );
 
+    // GENERATE TRIGGER FOR SCOPE
+    trig_gen #(
+            .NUM_BITS       (NUM_BITS),
+            .NUM_CHANNELS   (NUM_CHANNELS))
+        trigger_gen (
+            .clk            (clk),
+            .rst            (rst),
+            .curr_note      (curr_note),
+            .tuning_word    (carrier_word),
+            .trigger        (trig_out)
+        );
+
     // GENERATE MODULATING SIGNAL
     note_gen #(
             .COS_LUT_VALUES (COS_LUT_VALUES),
@@ -102,7 +115,8 @@ module fm_synth_top #(
             .acc_clr        (mod_acc_clr),
             .curr_note      (curr_note),
             .tuning_word    (mod_word),
-            .wave_out       (mod_sig)
+            .wave_out       (mod_sig),
+            .trig_out       ()
         );
 
     // APPLY MODULATING SIGNAL
@@ -131,7 +145,8 @@ module fm_synth_top #(
             .acc_clr        (0),
             .curr_note      (curr_note),
             .tuning_word    (modulated_tuning_word),
-            .wave_out       (car_out)
+            .wave_out       (car_out),
+            .trig_out       ()
         );
 
     // REGISTER OUTPUTS
@@ -158,8 +173,8 @@ module fm_synth_top #(
     fixed_point_mult #(
             .WI_1   (8),
             .WF_1   (16),
-            .WI_2   (6),
-            .WF_2   (2),
+            .WI_2   (7),
+            .WF_2   (1),
             .WI_O   (10),
             .WF_O   (14))
         volume (

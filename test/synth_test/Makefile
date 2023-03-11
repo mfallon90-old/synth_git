@@ -50,6 +50,7 @@ VERILOG_SOURCES += $(PWD)/../../hdl/amp_shaper.v
 VERILOG_SOURCES += $(PWD)/../../hdl/rc_filter_fsm.v
 VERILOG_SOURCES += $(PWD)/../../hdl/sum_notes_16.v
 VERILOG_SOURCES += $(PWD)/../../hdl/fixed_point_adder.v
+VERILOG_SOURCES += $(PWD)/../../hdl/trig_gen.v
 
 TOPLEVEL := fm_synth_wrapper
 MODULE   := test_fm_synth

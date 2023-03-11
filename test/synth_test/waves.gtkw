@@ -1,23 +1,22 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Sun Jan 15 23:58:51 2023
+[*] Sat Mar 11 16:38:00 2023
 [*]
 [dumpfile] "C:\Users\mfall\Documents\School\year_4\senior_design\synth_git\test\synth_test\dump.vcd"
-[dumpfile_mtime] "Sun Jan 15 23:55:46 2023"
-[dumpfile_size] 28218947
+[dumpfile_mtime] "Sat Mar 11 16:13:18 2023"
+[dumpfile_size] 70713845
 [savefile] "C:\Users\mfall\Documents\School\year_4\senior_design\synth_git\test\synth_test\waves.gtkw"
-[timestart] 42900000
-[size] 1920 1137
+[timestart] 848624000
+[size] 1920 1017
 [pos] -1 -1
-*-25.340088 133475000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.154055 849318000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] fm_synth_wrapper.
 [treeopen] fm_synth_wrapper.synth.
-[treeopen] fm_synth_wrapper.synth.carrier_signal.
 [treeopen] fm_synth_wrapper.synth.note_sum_point.genblk1[0].
-[sst_width] 309
-[signals_width] 430
+[sst_width] 197
+[signals_width] 269
 [sst_expanded] 1
-[sst_vpaned_height] 342
+[sst_vpaned_height] 301
 @420
 fm_synth_wrapper.synth.carrier_signal.COS_LUT_VALUES
 fm_synth_wrapper.synth.carrier_signal.DEPTH
@@ -47,12 +46,49 @@ fm_synth_wrapper.synth.carrier_signal.tri_down[17:0]
 fm_synth_wrapper.synth.carrier_signal.tri_up[17:0]
 @22
 fm_synth_wrapper.synth.carrier_signal.tuning_word[31:0]
-@40010420
+@40010421
 [fpshift_count] 16
 fm_synth_wrapper.synth.carrier_signal.wave_out[17:0]
 @28
 fm_synth_wrapper.synth.carrier_signal.wave_sel[1:0]
-@29
 fm_synth_wrapper.synth.carrier_signal.quad[1:0]
+@200
+-
+-
+@22
+fm_synth_wrapper.synth.trigger_gen.acc[31:0]
+@28
+fm_synth_wrapper.synth.trigger_gen.clk
+@c00022
+fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+@28
+(0)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(1)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(2)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(3)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(4)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(5)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(6)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(7)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(8)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(9)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(10)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(11)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(12)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(13)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(14)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+(15)fm_synth_wrapper.synth.trigger_gen.curr_note[15:0]
+@1401200
+-group_end
+@28
+fm_synth_wrapper.synth.trigger_gen.rst
+@22
+fm_synth_wrapper.synth.trigger_gen.state[3:0]
+fm_synth_wrapper.synth.trigger_gen.trig_word[31:0]
+fm_synth_wrapper.synth.trigger_gen.trig_word_reg[31:0]
+@28
+fm_synth_wrapper.synth.trigger_gen.trigger
+@22
+fm_synth_wrapper.synth.trigger_gen.tuning_word[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

@@ -23,7 +23,8 @@ module note_gen #(
     input   wire    [NUM_CHANNELS-1:0]      acc_clr,
     input   wire    [NUM_CHANNELS-1:0]      curr_note,
     input   wire    [NUM_BITS-1:0]          tuning_word,
-    output  reg     [WIDTH-1:0]             wave_out
+    output  reg     [WIDTH-1:0]             wave_out,
+    output  wire                            trig_out
     );
 
     localparam MAX  = 18'b111111111111111111;
@@ -46,6 +47,8 @@ module note_gen #(
     assign tri_out = (quad == 2'b11 || quad == 2'b00) ? tri_up : tri_down;
     assign tri_up = phi_out[NUM_BITS-2:NUM_BITS-WIDTH-1];
     assign tri_down = MAX - tri_up;
+
+    assign trig_out = phi_out[NUM_BITS-1];
 
     always @(*) begin
         case (wave_sel)
