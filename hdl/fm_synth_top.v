@@ -61,6 +61,7 @@ module fm_synth_top #(
     wire                            ready;
     wire                            s_clk_pos;
     wire                            s_clk_neg;
+    wire                            trig_en;
 
     // CONTROL UNIT
     control_unit #(
@@ -86,7 +87,8 @@ module fm_synth_top #(
             .interrupt_out  (interrupt_out),
             .s_clk          (s_clk),
             .s_clk_pos      (s_clk_pos),
-            .s_clk_neg      (s_clk_neg)
+            .s_clk_neg      (s_clk_neg),
+            .trig_en        (trig_en)
         );
 
     // GENERATE TRIGGER FOR SCOPE
@@ -96,6 +98,7 @@ module fm_synth_top #(
         trigger_gen (
             .clk            (clk),
             .rst            (rst),
+            .trig_en        (trig_en),
             .curr_note      (curr_note),
             .tuning_word    (carrier_word),
             .trigger        (trig_out)

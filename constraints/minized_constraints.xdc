@@ -174,8 +174,8 @@ set_property IOSTANDARD LVCMOS33 [get_ports wave_sel]
 # set_property PACKAGE_PIN N12 [get_ports PMOD2_PIN4]
 # set_property IOSTANDARD LVCMOS33 [get_ports PMOD2_PIN4]
 
-# set_property PACKAGE_PIN P15 [get_ports PMOD2_PIN7]
-# set_property IOSTANDARD LVCMOS33 [get_ports PMOD2_PIN7]
+set_property PACKAGE_PIN P15 [get_ports trig_out]
+set_property IOSTANDARD LVCMOS33 [get_ports trig_out]
 
 # set_property PACKAGE_PIN R15 [get_ports PMOD2_PIN8]
 # set_property IOSTANDARD LVCMOS33 [get_ports PMOD2_PIN8]

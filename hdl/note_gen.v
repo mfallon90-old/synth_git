@@ -53,7 +53,7 @@ module note_gen #(
     always @(*) begin
         case (wave_sel)
             0 :         wave_out = sin_out;
-            1 :         wave_out = phi_out[NUM_BITS-1:NUM_BITS-WIDTH];
+            1 :         wave_out = {1'b0, phi_out[NUM_BITS-1:NUM_BITS-WIDTH-1]};
             2 :         wave_out = phi_out[NUM_BITS-1] ? LO : HI;
             3 :         wave_out = tri_out;
             default :   wave_out = sin_out;

@@ -33,7 +33,8 @@ module control_unit #(
     output  wire                        interrupt_out,
     output  wire                        s_clk,
     output  reg                         s_clk_pos,
-    output  reg                         s_clk_neg
+    output  reg                         s_clk_neg,
+    output  wire                        trig_en
     );
 
     wire    [NUM_BITS-1:0]          carriers    [0:NUM_CHANNELS-1];
@@ -46,6 +47,7 @@ module control_unit #(
 
     assign interrupt_out    = |available;
     assign s_clk            = s_cnt[1];
+    assign trig_en          = count_0[0];
 
     generate
         for (i=0; i<NUM_CHANNELS; i=i+1) begin
