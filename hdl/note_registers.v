@@ -16,7 +16,7 @@
 module note_registers #(
     parameter   NUM_BITS_IN     = 18,
     parameter   NUM_BITS_OUT    = 24,
-    parameter   NUM_BITS_TAU    = 5,
+    parameter   NUM_BITS_TAU    = 16,
     parameter   NUM_CHANNELS    = 16
     )(
     input   wire                        clk,

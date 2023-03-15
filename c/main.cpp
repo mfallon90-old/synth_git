@@ -152,10 +152,20 @@ void Synth_IRQ_Handler(void *CallbackRef) {
     channels.make_available();
 }
 
+enum states {S_STATUS, S_NOTE_ON, S_NOTE_OFF, S_CONTROL_CHANGE,
+             S_VELOCITY_ON, S_VELOCITY_OFF, S_PATCH, S_VOLUME,
+             S_MOD_TAU, S_RC_TAU, S_PITCH_BEND_LSB, S_PITCH_BEND_MSB,
+             S_MODULATE, S_ERROR};
 
+struct midi_message {
+    enum states curr_state;
+    unsigned char curr_byte;
+};
+
+enum states state = S_STATUS;
 
 unsigned char byte_in = 0;
-unsigned char state = S_STATUS;
+
 
 unsigned char mode;
 unsigned char status;
@@ -165,13 +175,13 @@ unsigned char control_change;
 unsigned char velocity;
 unsigned char volume;
 unsigned char mod_byte = 0;
-unsigned char mod_amp_byte;
+unsigned char mod_tau_byte;
 unsigned int  pitch_bend_lsb;
 unsigned int  pitch_bend_msb;
 unsigned int  pitch_bend;
 unsigned int  i = 0;
 unsigned char patch = 60;
-struct midi_message midi[1000];
+struct midi_message midi[40];
 
 // IRQ Handling function
 void UART_IRQ_Handler(void *CallbackRef) {
@@ -179,25 +189,52 @@ void UART_IRQ_Handler(void *CallbackRef) {
     car_mod notes;
 
     byte_in = (char) Xil_In32(UART_ADDR);
-    
-    switch (i) {
-        case 0 : midi->byte_1 = byte_in; i = i+1;   break;
-        case 1 : midi->byte_2 = byte_in; i = i+1;   break;
-        case 2 : midi->byte_3 = byte_in; i = 0;     break;
+        
+    // switch (i) {
+    //     case 0 : midi->byte_1 = byte_in; i = i+1;   break;
+    //     case 1 : midi->byte_2 = byte_in; i = i+1;   break;
+    //     case 2 : midi->byte_3 = byte_in; i = 0;     break;
+    // }
+
+    midi[i].curr_state = state;
+    midi[i].curr_byte = byte_in;
+    if (i<40-1) {
+    	i=i+1;
+    }
+    else {
+    	i = 0;
     }
 
     switch (state) {
         case S_STATUS:
             status = byte_in;
             switch (status) {
-                case NOTE_ON        : state = S_NOTE_ON;          break;
-                case NOTE_OFF       : state = S_NOTE_OFF;         break;
-                case CONTROL_CHANGE : state = S_CONTROL_CHANGE;   break;
-                case PITCH_BEND     : state = S_PITCH_BEND_LSB;   break;
-                default             : state = S_STATUS;           break;
+                case NOTE_ON : 
+                    state = S_NOTE_ON;
+                    break;
+
+                case NOTE_OFF : 
+                    state = S_NOTE_OFF;
+                    break;
+
+                case CONTROL_CHANGE :
+                    state = S_CONTROL_CHANGE;
+                    break;
+
+                case PITCH_BEND :
+                    state = S_PITCH_BEND_LSB;
+                    break;
+
+                default :
+                    state = S_ERROR;
+                    break;
             }
             break;
 
+
+        case S_ERROR:
+            state = S_STATUS;
+            break;
 
         case S_NOTE_ON:
             on_note = byte_in;
@@ -219,10 +256,11 @@ void UART_IRQ_Handler(void *CallbackRef) {
             control_change = byte_in;
             switch (control_change) {
                 case PATCH    : state = S_PATCH;    break;
-                case MODULATE : state = S_MODULATE; break;
-                case MOD_AMP  : state = S_MOD_AMP;  break;
+                case RC_TAU   : state = S_RC_TAU;   break;
+                case MOD_AMP  : state = S_MOD_TAU;  break;
                 case VOLUME   : state = S_VOLUME;   break;
-                default       : state = S_STATUS;   break;
+                case MODULATE : state = S_MODULATE; break;
+                default       : state = S_ERROR;    break;
             }
             break;
 
@@ -241,16 +279,22 @@ void UART_IRQ_Handler(void *CallbackRef) {
             break;
 
 
-        case S_MODULATE:
+        case S_RC_TAU:
             mod_byte = byte_in;
             decode_tau(mod_byte);
             state = S_STATUS;
             break;
 
 
-        case S_MOD_AMP:
-            mod_amp_byte = byte_in;
-            decode_mod_amp(mod_amp_byte);
+        case S_MOD_TAU:
+            mod_tau_byte = byte_in;
+            decode_mod_tau(mod_tau_byte);
+            state = S_STATUS;
+            break;
+
+
+        case S_MODULATE:
+            modulate(byte_in);
             state = S_STATUS;
             break;
 
@@ -283,6 +327,7 @@ void UART_IRQ_Handler(void *CallbackRef) {
             state = S_STATUS;
             break;
     }
+
 }
 
 

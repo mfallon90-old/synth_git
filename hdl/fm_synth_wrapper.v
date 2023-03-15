@@ -16,7 +16,7 @@ module fm_synth_wrapper #(
     parameter   COS_LUT_VALUES  = "C:/Users/mfall/Documents/School/year_4/senior_design/v_3/hdl/lut.mem",
     // parameter   COS_LUT_VALUES  = "lut.mem",
     parameter   NUM_CHANNELS    = 16,
-    parameter   NUM_REG         = 33,
+    parameter   NUM_REG         = 52,
     parameter   LATENCY         = 3,
     parameter   NUM_BRAM        = 32,
     parameter   NUM_BITS        = 32,
@@ -60,22 +60,27 @@ module fm_synth_wrapper #(
     output  wire                            trig_out
     );
 
+    localparam  NUM_BITS_TAU = 16;
+
     wire    [NUM_CHANNELS*NUM_BITS-1:0] carriers;
     wire    [NUM_CHANNELS*NUM_BITS-1:0] modulators;
     wire    [NUM_CHANNELS*NUM_BITS-1:0] velocities;
-    wire    [4:0]                       attack_tau;
-    wire    [4:0]                       decay_tau;
-    wire    [4:0]                       release_tau;
+    wire    [NUM_BITS_TAU-1:0]          attack_tau;
+    wire    [NUM_BITS_TAU-1:0]          decay_tau;
+    wire    [NUM_BITS_TAU-1:0]          release_tau;
+    wire    [NUM_BITS-1:0]              mod_tau;
     wire    [7:0]                       mod_amplitude;
     wire    [7:0]                       volume_reg;
     wire    [1:0]                       wave_sel;
+    wire                                mod_enable;
 
 
     // CONTROL AND STATUS REGISTERS
     axi_lite_cs_reg #(
             .C_DATA_WIDTH   (NUM_BITS),
             .C_NUM_REG      (NUM_REG),
-            .C_ADDR_WIDTH   (`C_ADDR_WIDTH))
+            .C_ADDR_WIDTH   (`C_ADDR_WIDTH),
+            .C_NUM_BITS_TAU (NUM_BITS_TAU))
         c_s_reg (
             .s_axi_aclk     (s_axi_aclk),
             .s_axi_aresetn  (s_axi_aresetn),
@@ -106,8 +111,11 @@ module fm_synth_wrapper #(
             .release_tau    (release_tau),
             .mod_amplitude  (mod_amplitude),
             .volume_reg     (volume_reg),
-            .wave_sel       (wave_sel)
+            .wave_sel       (wave_sel),
+            .mod_tau        (mod_tau),
+            .mod_enable     (mod_enable)
         );
+
 
     // FM SYNTH TOP
     fm_synth_top #(
@@ -118,7 +126,8 @@ module fm_synth_wrapper #(
             .NUM_BITS       (NUM_BITS),
             .WI_OUT         (WI_OUT),
             .WF_OUT         (WF_OUT),
-            .NUM_BITS_DAC   (NUM_BITS_DAC))
+            .NUM_BITS_DAC   (NUM_BITS_DAC),
+            .NUM_BITS_TAU   (NUM_BITS_TAU))
         synth (
             .clk            (s_axi_aclk),
             .rst            (sys_rst),
@@ -130,19 +139,21 @@ module fm_synth_wrapper #(
             .decay_tau      (decay_tau),
             .release_tau    (release_tau),
             .volume_reg     (volume_reg),
+            .mod_enable     (mod_enable),
             .mod_amplitude  (mod_amplitude),
             .word_select    (word_select),
             .serial_data    (serial_data),
             .interrupt_out  (interrupt),
             .s_clk          (s_clk),
-            .trig_out       (trig_out)
+            .trig_out       (trig_out),
+            .mod_tau        (mod_tau)
         );
 
-    // // Dump waves
-    // initial begin
-    //     $dumpfile("dump.vcd");
-    //     $dumpvars(0, fm_synth_wrapper);
-    // end
+    // Dump waves
+    initial begin
+        $dumpfile("dump.vcd");
+        $dumpvars();
+    end
 
 
 endmodule

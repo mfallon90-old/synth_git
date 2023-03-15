@@ -20,7 +20,8 @@ module fm_synth_top #(
     parameter   NUM_BITS        = 32,
     parameter   WI_OUT          = 2,
     parameter   WF_OUT          = 16,
-    parameter   NUM_BITS_DAC    = 24
+    parameter   NUM_BITS_DAC    = 24,
+    parameter   NUM_BITS_TAU    = 10
     )(
     input   wire                        clk,
     input   wire                        rst,
@@ -28,16 +29,18 @@ module fm_synth_top #(
     input   wire    [`TOTAL_BITS-1:0]   carrier_in,
     input   wire    [`TOTAL_BITS-1:0]   modulator_in,
     input   wire    [`TOTAL_BITS-1:0]   velocity_in,
-    input   wire    [4:0]               attack_tau,
-    input   wire    [4:0]               decay_tau,
-    input   wire    [4:0]               release_tau,
+    input   wire    [NUM_BITS_TAU-1:0]  attack_tau,
+    input   wire    [NUM_BITS_TAU-1:0]  decay_tau,
+    input   wire    [NUM_BITS_TAU-1:0]  release_tau,
     input   wire    [7:0]               mod_amplitude,
     input   wire    [7:0]               volume_reg,
+    input   wire                        mod_enable,
     output  wire                        word_select,
     output  wire                        serial_data,
     output  wire                        interrupt_out,
     output  wire                        s_clk,
-    output  wire                        trig_out
+    output  wire                        trig_out,
+    input   wire    [NUM_BITS-1:0]      mod_tau
     );
 
     localparam DEPTH = NUM_BRAM*1024;
@@ -128,9 +131,16 @@ module fm_synth_top #(
             .WI         (WI_OUT),
             .WF         (WF_OUT))
         apply_modulation (
+            .clk                    (clk),
+            .rst                    (rst),
             .mod_scalar             (mod_amplitude),
             .tuning_word            (carrier_word),
             .mod_signal             (mod_sig),
+            .acc_en                 (trig_en),
+            .curr_note              (curr_note),
+            .note_enable            (note_en),
+            .mod_tau                (mod_tau),
+            .mod_enable             (mod_enable),
             .modulated_tuning_word  (modulated_tuning_word)
         );
 
@@ -156,7 +166,7 @@ module fm_synth_top #(
     note_registers #(
             .NUM_BITS_IN    (WIDTH),
             .NUM_BITS_OUT   (NUM_BITS_DAC),
-            .NUM_BITS_TAU   (5),
+            .NUM_BITS_TAU   (NUM_BITS_TAU),
             .NUM_CHANNELS   (NUM_CHANNELS))
         note_sum_point (
             .clk            (clk),

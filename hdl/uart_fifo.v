@@ -19,7 +19,8 @@ module uart_fifo # (
     input   wire    [NUM_BITS-1:0]  word_in,
     input   wire                    word_in_valid,
     input   wire                    word_out_valid,
-    output  wire    [NUM_BITS-1:0]  word_out
+    output  wire    [NUM_BITS-1:0]  word_out,
+    output  reg                     word_rdy
     );
     
     reg [NUM_BITS-1:0]              fifo [0:FIFO_DEPTH-1];
@@ -42,11 +43,14 @@ module uart_fifo # (
             write_ptr   <= 0;
             read_ptr    <= 0;
             wrap        <= 0;
+            word_rdy    <= 0;
         end
 
         else begin
+            word_rdy    <= 0;
             if (word_in_valid) begin
                 if (~full) begin
+                    word_rdy    <= 1;
                     fifo[write_ptr] <= word_in;
                     if (write_ptr == FIFO_DEPTH-1) begin
                         write_ptr   <= 0;

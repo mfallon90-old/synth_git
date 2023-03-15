@@ -85,8 +85,9 @@ info linked_list::in_use(unsigned int note) {
 void linked_list::note_on(car_mod note, unsigned char velocity) {
         info note_info = in_use(note.carrier);
         node *tmp = head;
-        unsigned int attack = velocity << 24;
+        unsigned int attack = velocity << 26;
         unsigned int decay = velocity << 6;
+        // unsigned int decay = velocity << 8;
         unsigned int velocity_in = attack | decay;
 
     // If the note is not currently being played, then select the first

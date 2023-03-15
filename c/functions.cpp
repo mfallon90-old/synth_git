@@ -11,11 +11,15 @@
 #include "xil_io.h"
 #include "constants.hpp"
 
-    void synth_init(unsigned int init) {
-    Xil_Out32(CTRL_REG_ADDR, init);
-    for (int i=0; i<NUM_CHANNELS; i=i+1) {
-        Xil_Out32(VEL_BASE_ADDR + 4*i, VELOCITY_INIT);
-    }
+    void synth_init(unsigned int ctrl_init) {
+        Xil_Out32(CTRL_REG_ADDR, ctrl_init);
+        Xil_Out32(RC_ATTACK_ADDR, RC_ATTACK_INIT);
+        Xil_Out32(RC_DECAY_ADDR, RC_DECAY_INIT);
+        Xil_Out32(RC_RELEASE_ADDR, RC_RELEASE_INIT);
+        Xil_Out32(MOD_TAU_ADDR, 0x00000638);
+        for (int i=0; i<NUM_CHANNELS; i=i+1) {
+            Xil_Out32(VEL_BASE_ADDR + 4*i, VELOCITY_INIT);
+        }
     }
 
     void decode_volume(unsigned char x) {
@@ -29,28 +33,24 @@
         return;
     }
 
-    void decode_mod_amp(unsigned char x) {
-        unsigned int mod_amp, mask, reset;
-
-        mask = x << 22;
-        mod_amp = Xil_In32(CTRL_REG_ADDR);
-        reset = MOD_AMP_RST & mod_amp;
-
-        Xil_Out32(CTRL_REG_ADDR, mask | reset);
+    void decode_mod_tau(unsigned char x) {
+        Xil_Out32(MOD_TAU_ADDR, x << 5);
         return;
     }
 
     void decode_tau(unsigned char x) {
-        unsigned int ctrl_reg, mask, reset;
-        x = x >> 2;
-        mask = x;
-        mask = mask | (x << 5);
-        mask = mask | (x << 10);
+        unsigned int temp = x << 8;
+        Xil_Out32(RC_ATTACK_ADDR,  x << 3);
+        Xil_Out32(RC_DECAY_ADDR,   x << 1);
+        Xil_Out32(RC_RELEASE_ADDR, x << 1);
+        return;
+    }
 
-        ctrl_reg = Xil_In32(CTRL_REG_ADDR);
-        reset = TAU_RST & ctrl_reg;
+    void modulate(unsigned char x) {
+        unsigned int mask;
 
-        Xil_Out32(CTRL_REG_ADDR, mask | reset);
+        mask = Xil_In32(CTRL_REG_ADDR);
+        Xil_Out32(CTRL_REG_ADDR, mask ^ MOD_MASK);
         return;
     }
 

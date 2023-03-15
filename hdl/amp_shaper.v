@@ -13,7 +13,7 @@
 
 module amp_shaper #
     (
-    parameter NUM_BITS_TAU  = 5,
+    parameter NUM_BITS_TAU  = 16,
     parameter NUM_BITS_WORD = 18
     )
     (
@@ -51,14 +51,14 @@ module amp_shaper #
         );
 
     fixed_point_mult #(
-            .WI_1   (4),
-            .WF_1   (ENV_BITS-4),
+            .WI_1   (2),
+            .WF_1   (NUM_BITS_WORD-2),
             .WI_2   (2),
             .WF_2   (NUM_BITS_WORD-2),
             .WI_O   (4),
             .WF_O   (NUM_BITS_WORD-4))
         amplitude_shaper (
-            .in_1       (envelope),
+            .in_1       (envelope[ENV_BITS-1-:NUM_BITS_WORD]),
             .in_2       (word_in),
             .data_out   (word_out),
             .ovf        ()

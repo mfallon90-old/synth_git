@@ -67,7 +67,11 @@
         localparam VELOCITY_15_ADDR = 47;
 
         // CONTROL ADDRESS
-        localparam CONTROL_REG_ADDR  = 48;
+        localparam CONTROL_REG_ADDR = 48;
+        localparam RC_ATTACK_ADDR   = 49;
+        localparam RC_DECAY_ADDR    = 50;
+        localparam RC_RELEASE_ADDR  = 51;
+        localparam MOD_TAU_ADDR     = 52;
 
     endpackage
 

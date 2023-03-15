@@ -46,6 +46,9 @@ module trig_gen #(
             if (trig_en) begin
                 acc         <= acc + trig_word;
                 trig_word   <= tuning_word;
+                if (trig_word == 0) begin
+                    acc <= 0;
+                end
             end
         end
     end

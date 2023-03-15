@@ -12,9 +12,14 @@
 
     //Register Base Address
     #define CAR_BASE_ADDR XPAR_FM_SYNTH_WRAPPER_0_BASEADDR
-    #define MOD_BASE_ADDR (CAR_BASE_ADDR + (4*NUM_CHANNELS))
-    #define VEL_BASE_ADDR (MOD_BASE_ADDR + (4*NUM_CHANNELS))
-    #define CTRL_REG_ADDR (VEL_BASE_ADDR + (4*NUM_CHANNELS))
+    #define MOD_BASE_ADDR   (CAR_BASE_ADDR + (4*NUM_CHANNELS))
+    #define VEL_BASE_ADDR   (MOD_BASE_ADDR + (4*NUM_CHANNELS))
+    #define CTRL_REG_ADDR   (VEL_BASE_ADDR + (4*NUM_CHANNELS))
+
+    #define RC_ATTACK_ADDR  (VEL_BASE_ADDR + (4*NUM_CHANNELS) + 4)
+    #define RC_DECAY_ADDR   (RC_ATTACK_ADDR + 4)
+    #define RC_RELEASE_ADDR (RC_DECAY_ADDR + 4)
+    #define MOD_TAU_ADDR    (RC_RELEASE_ADDR + 4)
 
     //UART Base Address
     #define UART_ADDR XPAR_AXI_UART_WRAPPER_0_BASEADDR
@@ -69,11 +74,11 @@
     /*
     Simple struct to hold each byte of a midi message
     */
-    struct midi_message {
-        unsigned char byte_1 = 0;
-        unsigned char byte_2 = 0;
-        unsigned char byte_3 = 0;
-    };
+    // struct midi_message {
+    //     unsigned char byte_1 = 0;
+    //     unsigned char byte_2 = 0;
+    //     unsigned char byte_3 = 0;
+    // };
 
     extern node *head, *tail;
     extern info note_info;
@@ -89,21 +94,23 @@
 
     #define PATCH                   0x07
     #define MOD_AMP                 0x0A
-    #define MODULATE                0x0B
+    #define RC_TAU                  0x0B
     #define VOLUME                  0x5B
+    #define MODULATE                0x40
 
-    #define S_STATUS            0
-    #define S_NOTE_ON           1
-    #define S_NOTE_OFF          2
-    #define S_CONTROL_CHANGE    3
-    #define S_VELOCITY_ON       4
-    #define S_VELOCITY_OFF      5
-    #define S_PATCH             6
-    #define S_VOLUME            7
-    #define S_MOD_AMP           8
-    #define S_MODULATE          9
-    #define S_PITCH_BEND_LSB    10
-    #define S_PITCH_BEND_MSB    11
+    // #define S_STATUS            0
+    // #define S_NOTE_ON           1
+    // #define S_NOTE_OFF          2
+    // #define S_CONTROL_CHANGE    3
+    // #define S_VELOCITY_ON       4
+    // #define S_VELOCITY_OFF      5
+    // #define S_PATCH             6
+    // #define S_VOLUME            7
+    // #define S_MOD_TAU           8
+    // #define S_RC_TAU            9
+    // #define S_PITCH_BEND_LSB    10
+    // #define S_PITCH_BEND_MSB    11
+    // #define S_MODULATE          12
 
     #define NUM_CHANNELS 16
     #define MASK_ON  0X80000000
@@ -113,13 +120,21 @@
 
     #define VELOCITY_INIT   0b01000000000000000011000000000000
 
+    #define MOD_MASK        0b00000000000000000000000000000001
     #define WAVE_SEL_MASK   0b00111111111111111111111111111111
     #define SIN_WAVE_MASK   0b00000000000000000000000000000000
     #define SAW_WAVE_MASK   0b01000000000000000000000000000000
     #define SQR_WAVE_MASK   0b10000000000000000000000000000000
     #define TRI_WAVE_MASK   0b11000000000000000000000000000000
     
-    #define CTRL_INIT       0b00000100000010000011110111101111
+    #define CTRL_INIT       0b00000100000010000000000000000000
+    // #define CTRL_INIT       0b00000100000010000011110111101111
+
+    #define RC_TAU_INIT     0b00001000000000010000000000001111
+    #define RC_ATTACK_INIT  0b00000000000000000000000000100001
+    #define RC_DECAY_INIT   0b00000000000000000000000000000001
+    #define RC_RELEASE_INIT 0b00000000000000000000000000000001
+    #define MOD_TAU_INIT    0x00000638
 
     #define MOD_AMP_RST 0b11000000001111111111111111111111
     #define VOLUME_RST  0b11111111110000000111111111111111

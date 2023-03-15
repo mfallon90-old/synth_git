@@ -63,6 +63,7 @@ module axi_uart_wrapper #(
     reg                     rd_addr_rdy;
     reg                     rd_data_vld;
     reg                     rd_en;
+    wire                    word_vld;
 
     assign s_axi_arready    = rd_addr_rdy;
     assign s_axi_rdata      = read_data;
@@ -115,7 +116,7 @@ module axi_uart_wrapper #(
             .rst_n      (s_axi_aresetn),
             .i_data     (midi_in),
             .o_data     (midi_out),
-            .rdy_flg    (midi_intr)
+            .rdy_flg    (word_vld)
         );
 
     uart_fifo #(
@@ -125,9 +126,10 @@ module axi_uart_wrapper #(
             .clk            (s_axi_aclk),
             .rst_n          (s_axi_aresetn),
             .word_in        (midi_out),
-            .word_in_valid  (midi_intr),
+            .word_in_valid  (word_vld),
             .word_out_valid (rd_en),
-            .word_out       (fifo_out)
+            .word_out       (fifo_out),
+            .word_rdy       (midi_intr)
         );
 
 

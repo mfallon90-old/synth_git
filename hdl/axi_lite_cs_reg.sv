@@ -15,8 +15,9 @@ import const_pckg::*;
 
 module axi_lite_cs_reg #(
     parameter integer C_DATA_WIDTH      = 32,
-    parameter integer C_NUM_REG         = 33,
-    parameter integer C_ADDR_WIDTH      = ($clog2(C_NUM_REG) + 2)
+    parameter integer C_NUM_REG         = 51,
+    parameter integer C_ADDR_WIDTH      = ($clog2(C_NUM_REG) + 2),
+    parameter integer C_NUM_BITS_TAU    = 16
     )(
     // Clock and reset
     input   wire                            s_axi_aclk,
@@ -49,12 +50,14 @@ module axi_lite_cs_reg #(
     output  wire    [`PCKD_BITS-1:0]        carrier_out,
     output  wire    [`PCKD_BITS-1:0]        modulator_out,
     output  wire    [`PCKD_BITS-1:0]        velocity_out,
-    output  wire    [4:0]                   attack_tau,
-    output  wire    [4:0]                   decay_tau,
-    output  wire    [4:0]                   release_tau,
+    output  wire    [C_NUM_BITS_TAU-1:0]    attack_tau,
+    output  wire    [C_NUM_BITS_TAU-1:0]    decay_tau,
+    output  wire    [C_NUM_BITS_TAU-1:0]    release_tau,
     output  wire    [7:0]                   mod_amplitude,
     output  wire    [7:0]                   volume_reg,
-    output  wire    [1:0]                   wave_sel
+    output  wire    [1:0]                   wave_sel,
+    output  wire    [C_DATA_WIDTH-1:0]      mod_tau,
+    output  wire                            mod_enable
     );
 
     // 31   mod_amp     vol    a_tau   d_tau   r_tau
@@ -118,6 +121,10 @@ module axi_lite_cs_reg #(
     reg [C_DATA_WIDTH-1:0]  velocity_15;
 
     reg [C_DATA_WIDTH-1:0]  control_reg;
+    reg [C_DATA_WIDTH-1:0]  rc_attack_reg;
+    reg [C_DATA_WIDTH-1:0]  rc_decay_reg;
+    reg [C_DATA_WIDTH-1:0]  rc_release_reg;
+    reg [C_DATA_WIDTH-1:0]  mod_tau_reg;
 
     reg [C_ADDR_WIDTH-1:0]  i;
     reg [C_ADDR_WIDTH-1:0]  read_address;
@@ -154,9 +161,12 @@ module axi_lite_cs_reg #(
     assign wave_sel         = control_reg[31:30];
     assign mod_amplitude    = {1'b0, control_reg[28:22]};
     assign volume_reg       = {1'b0, control_reg[21:15]};
-    assign attack_tau       = control_reg[14:10];
-    assign decay_tau        = control_reg[9:5];
-    assign release_tau      = control_reg[4:0];
+
+    assign attack_tau       = rc_attack_reg[C_NUM_BITS_TAU-1:0];
+    assign decay_tau        = rc_decay_reg[C_NUM_BITS_TAU-1:0];
+    assign release_tau      = rc_release_reg[C_NUM_BITS_TAU-1:0];
+    assign mod_tau          = mod_tau_reg;
+    assign mod_enable       = control_reg[0];
 
     assign s_axi_awready    = wr_addr_rdy;
     assign s_axi_wready     = wr_data_rdy;
@@ -248,6 +258,10 @@ module axi_lite_cs_reg #(
                     VELOCITY_15_ADDR    : read_data   <= velocity_15;
                     //------------------------------------------------
                     CONTROL_REG_ADDR    : read_data   <= control_reg;
+                    RC_ATTACK_ADDR      : read_data   <= rc_attack_reg;
+                    RC_DECAY_ADDR       : read_data   <= rc_decay_reg;
+                    RC_RELEASE_ADDR     : read_data   <= rc_release_reg;
+                    MOD_TAU_ADDR        : read_data   <= mod_tau_reg;
                 
                     default : begin
                         read_data <= 0;
@@ -326,6 +340,10 @@ module axi_lite_cs_reg #(
             velocity_14     <= 0;
             velocity_15     <= 0;
             control_reg     <= 0;
+            rc_attack_reg   <= 0;
+            rc_decay_reg    <= 0;
+            rc_release_reg  <= 0;
+            mod_tau_reg     <= 0;
 
         end
 
@@ -411,6 +429,10 @@ module axi_lite_cs_reg #(
                     VELOCITY_15_ADDR    : velocity_15    <= write_data;
                     //-------------------------------------------------
                     CONTROL_REG_ADDR    : control_reg    <= write_data;
+                    RC_ATTACK_ADDR      : rc_attack_reg  <= write_data;
+                    RC_DECAY_ADDR       : rc_decay_reg   <= write_data;
+                    RC_RELEASE_ADDR     : rc_release_reg <= write_data;
+                    MOD_TAU_ADDR        : mod_tau_reg    <= write_data;
                 
                     default : begin
                         write_resp      <= C_DEC_ERR;
@@ -425,11 +447,11 @@ module axi_lite_cs_reg #(
     end
 
 
-    // Dump waves
-    initial begin
-        $dumpfile("dump.vcd");
-        $dumpvars;
-    end
+    // // Dump waves
+    // initial begin
+    //     $dumpfile("dump.vcd");
+    //     $dumpvars;
+    // end
 
 
     endmodule
