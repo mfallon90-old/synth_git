@@ -111,6 +111,7 @@
     // #define S_PITCH_BEND_LSB    10
     // #define S_PITCH_BEND_MSB    11
     // #define S_MODULATE          12
+    // #define S_ERROR             13
 
     #define NUM_CHANNELS 16
     #define MASK_ON  0X80000000

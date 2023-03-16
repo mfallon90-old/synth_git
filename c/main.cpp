@@ -162,6 +162,7 @@ struct midi_message {
     unsigned char curr_byte;
 };
 
+// unsigned int state = S_STATUS;
 enum states state = S_STATUS;
 
 unsigned char byte_in = 0;
@@ -199,10 +200,10 @@ void UART_IRQ_Handler(void *CallbackRef) {
     midi[i].curr_state = state;
     midi[i].curr_byte = byte_in;
     if (i<40-1) {
-    	i=i+1;
+        i=i+1;
     }
     else {
-    	i = 0;
+        i = 0;
     }
 
     switch (state) {
