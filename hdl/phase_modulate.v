@@ -24,16 +24,17 @@
 module phase_modulate #(
     NUM_BITS    = 32,
     WI          = 2,
-    WF          = 16
+    WF          = 16,
+    NUM_CHAN    = 16
     )(
     input   wire                    clk,
     input   wire                    rst,
     input   wire    [7:0]           mod_scalar,
     input   wire    [NUM_BITS-1:0]  tuning_word,
     input   wire    [WI+WF-1:0]     mod_signal,
-    input   wire                    acc_en,
-    input   wire    [15:0]          curr_note,
-    input   wire    [15:0]          note_enable,
+    input   wire    [NUM_CHAN-1:0]  acc_en,
+    input   wire    [NUM_CHAN-1:0]  curr_note,
+    input   wire    [NUM_CHAN-1:0]  note_enable,
     input   wire    [NUM_BITS-1:0]  mod_tau,
     input   wire                    mod_enable,
     output  wire    [NUM_BITS-1:0]  modulated_tuning_word
@@ -43,44 +44,142 @@ module phase_modulate #(
     localparam  [NUM_BITS-1:0]  MAX  = 32'h3F000000;
     localparam  [NUM_BITS-1:0]  MIN  = 32'h00800000;
 
-    reg                     state;
-
-    localparam  S_RISE = 1'b0;
-    localparam  S_FALL = 1'b1;
-
     wire    [NUM_BITS-1:0]  mod_scaled_0;
     wire    [NUM_BITS-1:0]  mod_scaled_1;
 
     wire    [NUM_BITS-1:0]  envelope;
-    reg     [NUM_BITS-1:0]  envelope_reg;
     reg     [NUM_BITS-1:0]  env_delay;
     reg     [NUM_BITS-1:0]  step_delay;
     wire    [NUM_BITS-1:0]  product;
     wire    [NUM_BITS-1:0]  sum;
-    reg     [NUM_BITS-1:0]  channel [0:15];
     integer                 i;
+
+    reg     [NUM_BITS-1:0]  env_reg     [NUM_CHAN-1:0];
 
     assign  sum = step_delay - env_delay;
     assign  envelope = product + env_delay;
     assign  modulated_tuning_word = mod_scaled_1 + tuning_word;
 
+    always @(*) begin
+        step_delay  = 0;
+        case (1'b1)
+            curr_note[0]  : begin
+                env_delay   = env_reg[0];
+                if (note_enable[0]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[1]  : begin
+                env_delay   = env_reg[1];
+                if (note_enable[1]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[2]  : begin
+                env_delay   = env_reg[2];
+                if (note_enable[2]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[3]  : begin
+                env_delay   = env_reg[3];
+                if (note_enable[3]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[4]  : begin
+                env_delay   = env_reg[4];
+                if (note_enable[4]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[5]  : begin
+                env_delay   = env_reg[5];
+                if (note_enable[5]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[6]  : begin
+                env_delay   = env_reg[6];
+                if (note_enable[6]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[7]  : begin
+                env_delay   = env_reg[7];
+                if (note_enable[7]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[8]  : begin
+                env_delay   = env_reg[8];
+                if (note_enable[8]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[9]  : begin
+                env_delay   = env_reg[9];
+                if (note_enable[9]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[10] : begin
+                env_delay =  env_reg[10];
+                if (note_enable[10]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[11] : begin
+                env_delay =  env_reg[11];
+                if (note_enable[11]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[12] : begin
+                env_delay =  env_reg[12];
+                if (note_enable[12]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[13] : begin
+                env_delay =  env_reg[13];
+                if (note_enable[13]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[14] : begin
+                env_delay =  env_reg[14];
+                if (note_enable[14]) begin
+                    step_delay  = STEP;
+                end
+            end
+            curr_note[15] : begin
+                env_delay =  env_reg[15];
+                if (note_enable[15]) begin
+                    step_delay  = STEP;
+                end
+            end
+            default       : begin
+                env_delay    = env_reg[0];
+                if (note_enable[0]) begin
+                    step_delay  = STEP;
+                end
+            end
+        endcase
+    end
+
     always @(posedge clk) begin
         if (rst) begin
-            step_delay  <= 0;
-            env_delay   <= 0;
-            state       <= S_RISE;
+            for (i=0; i<NUM_CHAN; i=i+1) begin
+                env_reg[i]  <= 0;
+            end
         end
 
         else begin
-            if (mod_enable) begin
-                step_delay  <= STEP;
-            end
-            else begin
-                step_delay  <= 0;
-            end
-                    
-            if (acc_en) begin
-                env_delay   <= envelope;
+            for (i=0; i<NUM_CHAN; i=i+1) begin
+                if (acc_en[i]) begin
+                    env_reg[i]    <= envelope;
+                end
             end
         end
     end

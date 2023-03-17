@@ -126,7 +126,7 @@ module fm_synth_top #(
         );
 
     // APPLY MODULATING SIGNAL
-    phase_modulate_new #(
+    phase_modulate #(
             .NUM_BITS   (NUM_BITS),
             .WI         (WI_OUT),
             .WF         (WF_OUT),

@@ -40,13 +40,11 @@ module rc_filter_fsm #(
     output  wire signed [ENV_BITS-1:0]  envelope
     );
 
-// CONSTANTS
-
+    // CONSTANTS
     localparam      [ENV_BITS-1:0]  MAX             = 24'b00_1111000000000000000000;
     localparam      [ENV_BITS-1:0]  MIN             = 24'b00_0000000000000000001000;
     localparam                      S_IDLE          = 1'b0;
     localparam                      S_ACTIVE        = 1'b1;
-
 
     reg                             avail;
     reg                             state;
@@ -76,7 +74,6 @@ module rc_filter_fsm #(
         end
 
         else begin
-
             case (state)
                 S_IDLE: begin
                     avail   <= 0;
@@ -107,94 +104,6 @@ module rc_filter_fsm #(
                     end
                 end
             endcase
-
-
-
-            
-            // avail       <= 0;
-            // step_delay  <= 0;
-            // tau         <= {8'h00, attack_tau};
-
-            // if (on) begin
-            //     env_delay   <= envelope;
-            // end
-
-            // if (en) begin
-            //     step_delay  <= {attack, 8'h00};
-            // end
-            // else begin
-            //     step_delay  <= 0;
-            // end
-
-            // if (envelope < MIN) begin
-            //     env_delay   <= 0;
-            //     tau         <= 0;
-            //     avail       <= 1;
-            // end
-
-
-            // case (state)
-            //     S_IDLE : begin
-            //         if (en) begin
-            //             state       <= S_ATTACK;
-            //             step_delay  <= {attack, 8'h00};
-            //             tau         <= {8'h00, attack_tau};
-            //         end
-            //     end
-
-            //     S_ATTACK : begin
-            //         if (on) begin
-            //             env_delay   <= envelope;
-            //         end
-                    
-            //         if (envelope > MAX) begin
-            //             state       <= S_DECAY;
-            //             step_delay  <= {decay, 8'h00};
-            //             tau         <= {8'h00, decay_tau};
-            //         end
-
-            //         if (~en) begin
-            //             state       <= S_RELEASE;
-            //             step_delay  <= 0;
-            //             tau         <= {8'h00, release_tau};
-            //         end
-            //     end
-
-            //     S_DECAY : begin
-            //         if (on) begin
-            //             env_delay   <= envelope;
-            //         end
-
-            //         if (~en) begin
-            //             state       <= S_RELEASE;
-            //             step_delay  <= 0;
-            //             tau         <= {8'h00, release_tau};
-            //         end
-            //     end
-
-            //     S_RELEASE : begin
-            //         if (on) begin
-            //             env_delay   <= envelope;
-            //         end
-
-            //         if (en) begin
-            //             state       <= S_ATTACK;
-            //             step_delay  <= {attack, 8'h00};
-            //             tau         <= {8'h00, attack_tau};
-            //         end
-
-            //         if (envelope < MIN) begin
-            //             state       <= S_IDLE;
-            //             env_delay   <= 0;
-            //             tau         <= 0;
-            //             avail       <= 1;
-            //         end
-            //     end
-
-            //     default : begin
-            //         state   <= S_IDLE;
-            //     end
-            // endcase
         end
     end
 
