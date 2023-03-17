@@ -126,17 +126,18 @@ module fm_synth_top #(
         );
 
     // APPLY MODULATING SIGNAL
-    phase_modulate #(
+    phase_modulate_new #(
             .NUM_BITS   (NUM_BITS),
             .WI         (WI_OUT),
-            .WF         (WF_OUT))
+            .WF         (WF_OUT),
+            .NUM_CHAN   (NUM_CHANNELS))
         apply_modulation (
             .clk                    (clk),
             .rst                    (rst),
             .mod_scalar             (mod_amplitude),
             .tuning_word            (carrier_word),
             .mod_signal             (mod_sig),
-            .acc_en                 (trig_en),
+            .acc_en                 (mod_reg_en),
             .curr_note              (curr_note),
             .note_enable            (note_en),
             .mod_tau                (mod_tau),
